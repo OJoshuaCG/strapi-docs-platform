@@ -1,0 +1,9 @@
+Requiero tu apoyo con el siguiente plan, es necesario que consideres que actualmente ya existe una carpeta para frontend y backend, por el momento, el plan menciona enfocarse en el backend, especifica con strapi, crea una carpeta denominada `cms` dentro de backend. A  continuacion, este es el plan @plan.md . Si cuentas con algunas dudas, por favor, llevalas a cabo para apoyarte a resolverlas, no des por sentado nada, no seas complaciente, indaga, piensa como un senior software engineer, SRE, devops y DBA, ya que es importante llevar a cabo correctamente este proyecto. NO tiene un enfoque real, es unicamente para permitir documentar.
+
+
+
+1. Si tengo node y docker instalado en mi SO de Windows, puedes tomar la opcion A, ajusta todo para un despliegue con Docker, recuerda que strapi se encontrara en la carpeta `backend/cms`
+2. La opcion B, si el campo que viene por defecto en Strapi es funcional de acuerdo al proposito es mejor algo nativo.
+3. Dentro de backend, como nota, el backend tendra el cms de strapi y un proyecto python para el RAG de agentes, para que coexistan bajo la misma carpeta pero proyectos separados, por lo que en un futuro ese docker debe permitir integrar ambos.
+4. Preferentemenete en un prefijo.
+5. Dejalo con una master key, es "irrelevante" no? Digo, se puede cambiar a futuro
