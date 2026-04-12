@@ -1,0 +1,115 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+/* ─── Design tokens ───────────────────────────────────────────────────────── */
+@theme {
+  /* Typography */
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", "Fira Code", ui-monospace, monospace;
+
+  /* Brand palette */
+  --color-brand-50:  #eff6ff;
+  --color-brand-100: #dbeafe;
+  --color-brand-200: #bfdbfe;
+  --color-brand-300: #93c5fd;
+  --color-brand-400: #60a5fa;
+  --color-brand-500: #3b82f6;
+  --color-brand-600: #2563eb;
+  --color-brand-700: #1d4ed8;
+  --color-brand-800: #1e40af;
+  --color-brand-900: #1e3a8a;
+
+  /* Sidebar width */
+  --sidebar-width: 16rem;
+
+  /* Animation */
+  --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ─── Light mode tokens ───────────────────────────────────────────────────── */
+:root {
+  --bg-primary:      #ffffff;
+  --bg-secondary:    #f8fafc;
+  --bg-sidebar:      #f1f5f9;
+  --text-primary:    #0f172a;
+  --text-secondary:  #475569;
+  --text-muted:      #94a3b8;
+  --border-color:    #e2e8f0;
+  --code-bg:         #f1f5f9;
+  --code-text:       #0f172a;
+  --callout-bg:      #eff6ff;
+  --callout-border:  #3b82f6;
+}
+
+/* ─── Dark mode tokens ────────────────────────────────────────────────────── */
+.dark {
+  --bg-primary:      #0f172a;
+  --bg-secondary:    #1e293b;
+  --bg-sidebar:      #1e293b;
+  --text-primary:    #f1f5f9;
+  --text-secondary:  #94a3b8;
+  --text-muted:      #475569;
+  --border-color:    #334155;
+  --code-bg:         #1e293b;
+  --code-text:       #e2e8f0;
+  --callout-bg:      #1e3a8a;
+  --callout-border:  #60a5fa;
+}
+
+/* ─── Base reset ──────────────────────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  transition: background-color 0.2s var(--ease-smooth), color 0.2s var(--ease-smooth);
+}
+
+/* ─── Skeleton animation ──────────────────────────────────────────────────── */
+@keyframes skeleton-pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.4; }
+}
+
+.skeleton {
+  background-color: var(--border-color);
+  border-radius: 0.375rem;
+  animation: skeleton-pulse 1.5s ease-in-out infinite;
+}
+
+/* ─── Prose customization (TailwindCSS Typography v4) ────────────────────── */
+.prose {
+  --tw-prose-body:          var(--text-primary);
+  --tw-prose-headings:      var(--text-primary);
+  --tw-prose-lead:          var(--text-secondary);
+  --tw-prose-links:         var(--color-brand-600);
+  --tw-prose-bold:          var(--text-primary);
+  --tw-prose-counters:      var(--text-secondary);
+  --tw-prose-bullets:       var(--text-muted);
+  --tw-prose-hr:            var(--border-color);
+  --tw-prose-quotes:        var(--text-primary);
+  --tw-prose-quote-borders: var(--color-brand-500);
+  --tw-prose-captions:      var(--text-muted);
+  --tw-prose-code:          var(--code-text);
+  --tw-prose-pre-code:      var(--code-text);
+  --tw-prose-pre-bg:        var(--code-bg);
+  --tw-prose-th-borders:    var(--border-color);
+  --tw-prose-td-borders:    var(--border-color);
+}
+
+/* ─── Page transitions ────────────────────────────────────────────────────── */
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0);   }
+}
+
+.page-enter {
+  animation: fade-in 0.2s var(--ease-smooth) both;
+}
