@@ -40,7 +40,7 @@ services:
       HOST: 0.0.0.0
       PORT: 1337
       # ── Database ──
-      DATABASE_CLIENT: mysql2
+      DATABASE_CLIENT: mysql
       DATABASE_HOST: mariadb
       DATABASE_PORT: 3306
       DATABASE_NAME: ${DATABASE_NAME}
