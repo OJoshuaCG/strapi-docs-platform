@@ -7,6 +7,11 @@ import { slugify } from './slugify';
  * Only h2 and h3 are included (h1 is the article title).
  */
 export function extractToc(blocks: StrapiBlock[]): TocEntry[] {
+  // Guard: ensure blocks is actually an array
+  if (!Array.isArray(blocks)) {
+    return [];
+  }
+
   return blocks
     .filter(
       (b): b is Extract<StrapiBlock, { type: 'heading' }> =>

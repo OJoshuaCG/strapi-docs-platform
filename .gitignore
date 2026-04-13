@@ -6,3 +6,5 @@ build/
 *.log
 
 .claude/settings.local.json
+
+.qwen

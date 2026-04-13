@@ -28,10 +28,16 @@ services:
       target: development
     restart: unless-stopped
     volumes:
-      # Bind-mount source for hot reload. node_modules live in a named volume
-      # so Linux binaries (built inside the image) are never overwritten by
-      # any Windows-compiled modules on the host.
-      - ./cms:/app
+      # Only mount source code needed for runtime (src/, config/, package.json).
+      # We deliberately DO NOT mount the full ./cms:/app because the pre-built
+      # admin panel in the image must be preserved. Mounting selectively prevents
+      # the build artifacts from being overwritten while still allowing code
+      # changes in src/ and config/ to be picked up.
+      - ./cms/src:/app/src
+      - ./cms/config:/app/config
+      - ./cms/public:/app/public
+      - ./cms/package.json:/app/package.json
+      - ./cms/package-lock.json:/app/package-lock.json
       - cms_node_modules:/app/node_modules
     ports:
       - "1337:1337"
@@ -39,6 +45,10 @@ services:
       NODE_ENV: development
       HOST: 0.0.0.0
       PORT: 1337
+      # ── Disable admin panel watcher to avoid WebSocket HMR issues ──
+      # The admin is pre-built in the image. This prevents Strapi from
+      # trying to rebuild it on the fly (which causes WS connection errors).
+      STRAPI_ADMIN_WATCHER_DISABLE: "true"
       # ── Database ──
       DATABASE_CLIENT: mysql
       DATABASE_HOST: mariadb
