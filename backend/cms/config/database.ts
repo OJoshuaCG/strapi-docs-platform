@@ -1,11 +1,13 @@
 import path from 'path';
 import type { Core } from '@strapi/strapi';
 
+type ClientKind = 'mysql' | 'postgres' | 'sqlite';
+
 const config = ({ env }: Core.Config.Shared.ConfigParams): Core.Config.Database => {
-  const client = env('DATABASE_CLIENT', 'sqlite');
+  const client = env('DATABASE_CLIENT', 'sqlite') as ClientKind;
 
   const connections: Record<string, object> = {
-    mysql2: {
+    mysql: {
       connection: {
         host: env('DATABASE_HOST', 'localhost'),
         port: env.int('DATABASE_PORT', 3306),
@@ -54,7 +56,7 @@ const config = ({ env }: Core.Config.Shared.ConfigParams): Core.Config.Database 
   return {
     connection: {
       client,
-      ...connections[client],
+      ...connections[client] as { connection: any; pool?: any; useNullAsDefault?: boolean },
       acquireConnectionTimeout: env.int('DATABASE_CONNECTION_TIMEOUT', 60000),
     },
   };
