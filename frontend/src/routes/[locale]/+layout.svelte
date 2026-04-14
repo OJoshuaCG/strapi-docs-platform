@@ -1,6 +1,7 @@
 <script lang="ts">
   import Header from '$lib/components/layout/Header.svelte';
   import Sidebar from '$lib/components/layout/Sidebar.svelte';
+  import Footer from '$lib/components/layout/Footer.svelte';
   import type { LayoutData } from './$types';
 
   interface Props {
@@ -32,8 +33,9 @@
 />
 
 <!-- Main content area — offset by header height and sidebar width on large screens -->
-<main class="pt-14 lg:pl-64 min-h-screen bg-[var(--bg-primary)]">
+<main class="pt-13 lg:pl-64 min-h-screen bg-[var(--bg-primary)]">
   <div class="page-enter">
     {@render children()}
   </div>
+  <Footer locale={data.locale} />
 </main>

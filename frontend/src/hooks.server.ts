@@ -1,4 +1,13 @@
 import type { Handle } from '@sveltejs/kit';
+import { env } from '$env/dynamic/private';
+import { setInternalStrapiUrl } from '$lib/api/strapi';
+
+// If STRAPI_INTERNAL_URL is set (Docker / production), use it for all SSR
+// requests so the server can reach Strapi via the internal network (e.g.
+// http://strapi:1337) regardless of what VITE_STRAPI_URL was baked as.
+if (env.STRAPI_INTERNAL_URL) {
+  setInternalStrapiUrl(env.STRAPI_INTERNAL_URL);
+}
 
 /**
  * Sets the HTML lang attribute on the server so that SSR responses include

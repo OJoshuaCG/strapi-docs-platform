@@ -16,6 +16,18 @@ import { browser } from '$app/environment';
 const STRAPI_URL = (import.meta.env.VITE_STRAPI_URL as string) ?? 'http://localhost:1337';
 
 /**
+ * Server-side URL override for SSR in Docker environments.
+ * Set via hooks.server.ts using the STRAPI_INTERNAL_URL env var.
+ * This allows SSR to reach Strapi via the internal Docker network
+ * (e.g. http://strapi:1337) while the browser uses the public URL.
+ */
+let _internalStrapiUrl: string | null = null;
+
+export function setInternalStrapiUrl(url: string): void {
+  _internalStrapiUrl = url;
+}
+
+/**
  * Cache TTL in milliseconds.
  * Browser-side only — avoids re-fetching on rapid client navigations.
  * SSR never uses cache (getFromCache returns null when !browser).
@@ -70,7 +82,8 @@ export async function strapiRequest<T>(
   fetchFn: typeof fetch = globalThis.fetch,
   useCache = true,
 ): Promise<T> {
-  const url = `${STRAPI_URL}/api${path}`;
+  const baseUrl = !browser && _internalStrapiUrl ? _internalStrapiUrl : STRAPI_URL;
+  const url = `${baseUrl}/api${path}`;
 
   if (useCache && (!options.method || options.method === 'GET')) {
     const cached = getFromCache<T>(url);

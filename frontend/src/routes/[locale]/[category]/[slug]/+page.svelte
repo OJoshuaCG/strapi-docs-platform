@@ -2,6 +2,7 @@
   import BlockRenderer    from '$lib/components/blocks/BlockRenderer.svelte';
   import Breadcrumbs      from '$lib/components/layout/Breadcrumbs.svelte';
   import TableOfContents  from '$lib/components/layout/TableOfContents.svelte';
+  import { STRAPI_URL } from '$lib/api/strapi';
   import type { PageData } from './$types';
 
   interface Props {
@@ -12,7 +13,9 @@
 
   const article = $derived(data.article);
   const toc = $derived(data.toc);
+  const parsedContent = $derived(data.parsedContent);
   const locale = $derived(data.locale);
+  const isPreview = $derived(data.isPreview);
 
   const crumbs = $derived([
     { label: locale === 'es' ? 'Inicio' : 'Home', href: `/${locale}` },
@@ -29,21 +32,60 @@
         }).format(new Date(article.publishedAt))
       : null,
   );
+
+  // SEO metadata
+  const seoTitle = $derived(article.seoTitle || article.title);
+  const seoDescription = $derived(article.seoDescription || article.excerpt);
+  const ogImageUrl = $derived(
+    article.ogImage?.url 
+      ? article.ogImage.url.startsWith('http') 
+        ? article.ogImage.url 
+        : `${STRAPI_URL}${article.ogImage.url}`
+      : null
+  );
 </script>
 
 <svelte:head>
-  <title>{article.title}</title>
-  {#if article.excerpt}
-    <meta name="description" content={article.excerpt} />
+  <title>{seoTitle}</title>
+  {#if seoDescription}
+    <meta name="description" content={seoDescription} />
+    <meta property="og:description" content={seoDescription} />
+  {/if}
+  <meta property="og:title" content={seoTitle} />
+  {#if ogImageUrl}
+    <meta property="og:image" content={ogImageUrl} />
+  {/if}
+  {#if isPreview}
+    <meta name="robots" content="noindex,nofollow" />
   {/if}
 </svelte:head>
 
-<!-- Two-column layout on xl screens: content | TOC -->
 <div class="flex gap-8 max-w-6xl mx-auto px-6 py-8">
 
   <!-- Main article content -->
   <article class="flex-1 min-w-0">
     <Breadcrumbs crumbs={crumbs} />
+
+    <!-- Preview mode banner -->
+    {#if isPreview}
+      <div class="mb-6 p-4 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-700 rounded-lg">
+        <div class="flex items-start gap-3">
+          <svg class="w-5 h-5 text-yellow-600 dark:text-yellow-400 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+          </svg>
+          <div>
+            <p class="text-sm font-semibold text-yellow-800 dark:text-yellow-300">
+              {locale === 'es' ? 'Vista previa del borrador' : 'Draft Preview'}
+            </p>
+            <p class="text-xs text-yellow-700 dark:text-yellow-400 mt-1">
+              {locale === 'es' 
+                ? 'Estás viendo una versión no publicada. Los cambios aún no son públicos.' 
+                : 'You are viewing an unpublished version. Changes are not yet public.'}
+            </p>
+          </div>
+        </div>
+      </div>
+    {/if}
 
     <!-- Article header -->
     <header class="mb-8">
@@ -76,13 +118,7 @@
     <hr class="border-[var(--border-color)] mb-8" />
 
     <!-- Rich content blocks -->
-    {#if article.content && article.content.length > 0}
-      <BlockRenderer blocks={article.content} />
-    {:else}
-      <p class="text-[var(--text-muted)] italic">
-        {locale === 'es' ? 'Este artículo no tiene contenido.' : 'This article has no content.'}
-      </p>
-    {/if}
+    <BlockRenderer blocks={parsedContent} />
 
     <!-- Footer navigation -->
     <footer class="mt-12 pt-6 border-t border-[var(--border-color)]">

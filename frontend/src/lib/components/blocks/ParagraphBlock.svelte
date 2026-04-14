@@ -9,6 +9,6 @@
   let { block }: Props = $props();
 </script>
 
-<p class="my-4 leading-7 text-[var(--text-primary)]">
+<p class="leading-[var(--line-height-base)] my-[var(--spacing-paragraph,1rem)] text-[var(--text-primary)]">
   <InlineContent nodes={block.children} />
 </p>

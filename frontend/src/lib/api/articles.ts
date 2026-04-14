@@ -20,10 +20,11 @@ export async function getArticles(
     locale,
     'populate[category][fields][0]': 'name',
     'populate[category][fields][1]': 'slug',
+    'populate[category][fields][2]': 'order',
     ...(categorySlug
       ? { 'filters[category][slug][$eq]': categorySlug }
       : {}),
-    sort: 'title:asc',
+    sort: 'order:asc,title:asc',
     'pagination[page]': page,
     'pagination[pageSize]': pageSize,
   });

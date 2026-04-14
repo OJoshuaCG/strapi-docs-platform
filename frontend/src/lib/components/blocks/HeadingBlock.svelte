@@ -20,16 +20,16 @@
   );
 
   const sizeClass: Record<number, string> = {
-    1: 'text-3xl font-bold mt-10 mb-4',
-    2: 'text-2xl font-semibold mt-8 mb-3',
-    3: 'text-xl font-semibold mt-6 mb-2',
-    4: 'text-lg font-semibold mt-5 mb-2',
-    5: 'text-base font-semibold mt-4 mb-1',
-    6: 'text-sm font-semibold mt-4 mb-1',
+    1: 'text-3xl font-bold',
+    2: 'text-2xl font-semibold',
+    3: 'text-xl font-semibold',
+    4: 'text-lg font-semibold',
+    5: 'text-base font-semibold',
+    6: 'text-sm font-semibold',
   };
 
   const cls = $derived(
-    `${sizeClass[block.level] ?? ''} text-[var(--text-primary)] scroll-mt-20 group`,
+    `${sizeClass[block.level] ?? ''} leading-[var(--line-height-heading,1.25)] mt-[var(--spacing-heading-top,2rem)] mb-[var(--spacing-heading-bottom,0.75rem)] text-[var(--text-primary)] scroll-mt-20 group`,
   );
 </script>
 

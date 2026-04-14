@@ -1,5 +1,38 @@
 <script lang="ts">
   import type { StrapiCodeBlock } from '$lib/types/strapi';
+  import hljs from 'highlight.js/lib/core';
+
+  // Import only the languages you need to keep bundle size small
+  import javascript from 'highlight.js/lib/languages/javascript';
+  import typescript from 'highlight.js/lib/languages/typescript';
+  import python from 'highlight.js/lib/languages/python';
+  import bash from 'highlight.js/lib/languages/bash';
+  import xml from 'highlight.js/lib/languages/xml';
+  import css from 'highlight.js/lib/languages/css';
+  import json from 'highlight.js/lib/languages/json';
+  import sql from 'highlight.js/lib/languages/sql';
+  import yaml from 'highlight.js/lib/languages/yaml';
+  import markdown from 'highlight.js/lib/languages/markdown';
+
+  // Register languages
+  hljs.registerLanguage('javascript', javascript);
+  hljs.registerLanguage('js', javascript);
+  hljs.registerLanguage('typescript', typescript);
+  hljs.registerLanguage('ts', typescript);
+  hljs.registerLanguage('python', python);
+  hljs.registerLanguage('py', python);
+  hljs.registerLanguage('bash', bash);
+  hljs.registerLanguage('sh', bash);
+  hljs.registerLanguage('shell', bash);
+  hljs.registerLanguage('html', xml);
+  hljs.registerLanguage('xml', xml);
+  hljs.registerLanguage('css', css);
+  hljs.registerLanguage('json', json);
+  hljs.registerLanguage('sql', sql);
+  hljs.registerLanguage('yaml', yaml);
+  hljs.registerLanguage('yml', yaml);
+  hljs.registerLanguage('markdown', markdown);
+  hljs.registerLanguage('md', markdown);
 
   interface Props {
     block: StrapiCodeBlock;
@@ -8,6 +41,28 @@
   let { block }: Props = $props();
 
   const code = $derived(block.children[0]?.text ?? '');
+  const language = $derived(block.language ?? 'plaintext');
+
+  // Highlight the code
+  const highlightedCode = $derived(() => {
+    if (!code) return '';
+    try {
+      const result = hljs.highlight(code, { language: language || 'plaintext' });
+      return result.value;
+    } catch {
+      // If language not found, return plain text
+      return escapeHtml(code);
+    }
+  });
+
+  function escapeHtml(text: string): string {
+    return text
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  }
 
   let copied = $state(false);
 
@@ -21,7 +76,7 @@
 <div class="relative my-5 rounded-lg overflow-hidden border border-[var(--border-color)]">
   <!-- header bar -->
   <div class="flex items-center justify-between px-4 py-2 bg-[var(--bg-secondary)] border-b border-[var(--border-color)]">
-    <span class="text-xs font-mono text-[var(--text-muted)]">{block.language ?? 'código'}</span>
+    <span class="text-xs font-mono text-[var(--text-muted)]">{language || 'código'}</span>
     <button
       onclick={copyCode}
       class="text-xs text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors flex items-center gap-1"
@@ -42,5 +97,5 @@
   </div>
 
   <!-- code body -->
-  <pre class="overflow-x-auto p-4 bg-[var(--code-bg)] text-sm leading-6"><code class="font-mono text-[var(--code-text)]">{code}</code></pre>
+  <pre class="overflow-x-auto p-4 bg-[var(--code-bg)] text-sm leading-6"><code class="font-mono hljs-code-block">{@html highlightedCode()}</code></pre>
 </div>

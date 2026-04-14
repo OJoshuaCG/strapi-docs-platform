@@ -8,9 +8,14 @@
     1. Add it to StrapiBlock union in $lib/types/strapi.ts
     2. Create a new XxxBlock.svelte component
     3. Add a branch in the {#each} below
+
+  Note: Content is pre-parsed by parseContent() which handles both
+  Markdown strings and structured blocks arrays, so blocks should
+  already be normalized here.
 -->
 <script lang="ts">
   import type { StrapiBlock } from '$lib/types/strapi';
+  import { normalizeBlocks } from '$lib/utils/normalize-blocks';
 
   import HeadingBlock   from './HeadingBlock.svelte';
   import ParagraphBlock from './ParagraphBlock.svelte';
@@ -20,14 +25,22 @@
   import QuoteBlock     from './QuoteBlock.svelte';
 
   interface Props {
-    blocks: StrapiBlock[];
+    blocks: unknown;
   }
 
   let { blocks }: Props = $props();
+
+  // Normalize block types (handles shorthand types like "H" → "heading")
+  const normalizedBlocks = $derived(normalizeBlocks(blocks));
 </script>
 
 <div class="block-renderer">
-  {#each blocks as block, i (i)}
+  {#if normalizedBlocks.length === 0}
+    <p class="text-[var(--text-muted)] italic">
+      {import.meta.env.DEV ? '[BlockRenderer] No blocks to render' : ''}
+    </p>
+  {:else}
+    {#each normalizedBlocks as block, i (i)}
     {#if block.type === 'heading'}
       <HeadingBlock {block} />
     {:else if block.type === 'paragraph'}
@@ -48,4 +61,5 @@
       {/if}
     {/if}
   {/each}
+  {/if}
 </div>

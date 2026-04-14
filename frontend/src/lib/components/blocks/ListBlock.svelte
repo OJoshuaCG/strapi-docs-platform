@@ -10,17 +10,17 @@
 </script>
 
 {#if block.format === 'ordered'}
-  <ol class="my-4 ml-6 list-decimal space-y-1.5 text-[var(--text-primary)]">
+  <ol class="my-[var(--spacing-paragraph,1rem)] pl-6 list-decimal space-y-[var(--spacing-list,0.375rem)] text-[var(--text-primary)] list-outside">
     {#each block.children as item}
-      <li class="leading-7 pl-1">
+      <li class="leading-[var(--line-height-base)] pl-1">
         <InlineContent nodes={item.children} />
       </li>
     {/each}
   </ol>
 {:else}
-  <ul class="my-4 ml-6 list-disc space-y-1.5 text-[var(--text-primary)]">
+  <ul class="my-[var(--spacing-paragraph,1rem)] pl-6 list-disc space-y-[var(--spacing-list,0.375rem)] text-[var(--text-primary)] list-outside">
     {#each block.children as item}
-      <li class="leading-7 pl-1">
+      <li class="leading-[var(--line-height-base)] pl-1">
         <InlineContent nodes={item.children} />
       </li>
     {/each}

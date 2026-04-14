@@ -136,6 +136,10 @@ export interface StrapiArticle {
   content: StrapiBlock[];
   excerpt: string | null;
   version: string | null;
+  order: number | null;
+  seoTitle: string | null;
+  seoDescription: string | null;
+  ogImage: StrapiImageData | null;
   category: StrapiCategory | null;
   locale: string;
   publishedAt: string | null;
@@ -174,4 +178,79 @@ export const DEFAULT_LOCALE: SupportedLocale = 'es';
 
 export function isSupportedLocale(locale: string): locale is SupportedLocale {
   return (SUPPORTED_LOCALES as readonly string[]).includes(locale);
+}
+
+// ─── Global Settings / Theme tokens ──────────────────────────────────────────
+
+export interface ThemeTypography {
+  fontSans?: string;
+  fontMono?: string;
+  baseFontSize?: string;
+  baseLineHeight?: string;
+  headingLineHeight?: string;
+  paragraphSpacing?: string;
+  listSpacing?: string;
+  headingSpacingTop?: string;
+  headingSpacingBottom?: string;
+}
+
+export interface ThemeSpacing {
+  contentPaddingX?: string;
+  contentPaddingY?: string;
+  sectionGap?: string;
+  headerHeight?: string;
+  sidebarWidth?: string;
+}
+
+export interface ThemeColors {
+  lightBgPrimary?: string;
+  lightBgSecondary?: string;
+  lightBgSidebar?: string;
+  lightTextPrimary?: string;
+  lightTextSecondary?: string;
+  lightTextMuted?: string;
+  lightBorderColor?: string;
+  lightCodeBg?: string;
+  lightCodeText?: string;
+  lightCalloutBg?: string;
+  lightCalloutBorder?: string;
+  darkBgPrimary?: string;
+  darkBgSecondary?: string;
+  darkBgSidebar?: string;
+  darkTextPrimary?: string;
+  darkTextSecondary?: string;
+  darkTextMuted?: string;
+  darkBorderColor?: string;
+  darkCodeBg?: string;
+  darkCodeText?: string;
+  darkCalloutBg?: string;
+  darkCalloutBorder?: string;
+  brand50?: string;
+  brand500?: string;
+  brand900?: string;
+}
+
+export interface ThemeLayout {
+  maxContentWidth?: string;
+  tocWidth?: string;
+  borderRadius?: string;
+  codeBorderRadius?: string;
+  transitionDuration?: string;
+  animationEasing?: string;
+}
+
+export interface GlobalSettings {
+  id: number;
+  documentId: string;
+  siteName: string;
+  siteDescription: string | null;
+  favicon: StrapiImageData | null;
+  ogDefaultImage: StrapiImageData | null;
+  footerText: string | null;
+  typography?: ThemeTypography | null;
+  spacing?: ThemeSpacing | null;
+  colors?: ThemeColors | null;
+  layout?: ThemeLayout | null;
+  createdAt: string;
+  updatedAt: string;
 }
