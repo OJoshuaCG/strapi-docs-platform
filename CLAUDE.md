@@ -15,14 +15,75 @@ Portal de documentación técnica multidioma (español / inglés) compuesto por:
 El equipo editorial gestiona contenido desde el panel admin de Strapi sin tocar código.
 El frontend renderiza ese contenido mediante SSR para SEO.
 
-### Estado actual (2026-04-12)
+### Estado actual (2026-04-13)
 
 | Fase | Estado |
 |---|---|
 | Phase 1 — Backend completo | ✅ Completo |
 | Phase 1 — Frontend completo | ✅ Completo |
+| **Phase 1.5 — Admin improvements** | ✅ **Completo** |
 | Phase 2 — Búsqueda (Meilisearch + Python RAG) | 🔲 Sin empezar |
 | Phase 2 — Reverse proxy nginx/Caddy | 🔲 Sin empezar |
+
+---
+
+## Phase 1.5 — Features implementados
+
+### F1 — Live Preview de Artículos
+- Botón "Open preview" en el editor de Strapi para ver borradores sin publicar
+- Endpoint `/api/preview` en frontend valida token compartido
+- Ruta de artículo detecta modo preview (`?preview=true`) y muestra banner informativo
+- Previene indexación de borradores con `<meta name="robots" content="noindex,nofollow" />`
+- **Variables requeridas:** `PREVIEW_SECRET` en backend y frontend `.env`
+
+### F2 — Live Preview de Global Settings (parcial)
+- Página `/preview/theme` en frontend recibe colores vía `postMessage`
+- Admin `app.ts` configurado con soporte para locales es/en
+- **Nota:** La integración completa del iframe en el admin requiere un plugin custom de Strapi (documentado en `docs/`)
+
+### F3 — Servidor de Correo (Invitación de Usuarios)
+- Email provider `@strapi/provider-email-nodemailer` instalado y configurado
+- Soporta cualquier proveedor SMTP: Gmail, Sendgrid, Mailgun, Resend, etc.
+- **Variables requeridas:** `SMTP_*` y `EMAIL_*` en backend `.env`
+
+### F4 — Selector de Color Visual en Global Settings
+- Plugin `@strapi/plugin-color-picker` instalado y habilitado
+- Todos los 25 campos de color usan ahora `customField: "plugin::color-picker.color"`
+- Cada campo tiene descripción explicativa en `pluginOptions.description`
+- Los editores ven un selector de color visual en lugar de campos de texto
+
+### F5a — Campos SEO en Artículos
+- Nuevos campos en `documentation-article`:
+  - `seoTitle` (string, opcional) — Título alternativo para `<title>` y `og:title`
+  - `seoDescription` (text, max 160) — Para meta description y redes sociales
+  - `ogImage` (media, imagen) — Imagen para compartir en redes sociales
+- Frontend usa automáticamente `seoTitle` y `seoDescription` si están disponibles
+- Genera etiquetas Open Graph completas (`og:title`, `og:description`, `og:image`)
+
+### F5c — Orden de Artículos
+- Campo `order` (integer) agregado a `documentation-article` (default: 0)
+- Frontend ordena artículos por `order:asc,title:asc` en lugar de solo `title:asc`
+- Permite control manual del orden de artículos dentro de una categoría
+
+### F5e — Datos del Sitio en Global Settings
+- Nuevos campos en `global-setting`:
+  - `siteDescription` (text) — Descripción del sitio para SEO
+  - `favicon` (media) — Favicon configurable desde el admin
+  - `ogDefaultImage` (media) — Imagen por defecto para redes sociales
+  - `footerText` (string) — Texto del footer
+- Frontend usa favicon y siteDescription dinámicamente
+- Componente `Footer.svelte` muestra `footerText` configurable
+
+### F5b — Roles Diferenciados
+- **Sin código requerido** — Se configura desde Settings → Roles en el admin
+- Roles sugeridos:
+  - **Editor:** Crear, editar y publicar artículos y categorías. Sin acceso a Global Settings ni gestión de usuarios
+  - **Redactor:** Solo crear y editar artículos (sin publicar). Un Editor los revisa y publica
+
+### F5d — Webhook de Invalidación de Caché
+- Documentación completa en `docs/webhook-cache-invalidation.md`
+- Configuración sin código desde Settings → Webhooks en Strapi admin
+- Incluye código de ejemplo para endpoint `/api/cache-invalidate` en frontend
 
 ---
 
@@ -302,6 +363,9 @@ export const load: PageLoad = async ({ params }) => {
 - Para agregar permisos públicos a un nuevo Content Type, añadir al array `PUBLIC_PERMISSIONS` en `backend/cms/src/index.ts`.
 - Las migraciones de schema las genera Strapi automáticamente. No editar los archivos en `database/migrations/`.
 - Migraciones de datos personalizadas: crear `0002_nombre.ts` con `up()` y `down()`.
+- **Phase 1.5:** Los plugins se habilitan en `config/plugins.ts` (ej: `color-picker`, `email`).
+- **Phase 1.5:** La preview URL se configura en `config/admin.ts` bloque `preview`.
+- **Phase 1.5:** Los campos de color usan `customField: "plugin::color-picker.color"` con descripciones en `pluginOptions.description`.
 
 ---
 
@@ -314,6 +378,10 @@ export const load: PageLoad = async ({ params }) => {
 - `frontend/.env` — variables del frontend (`VITE_STRAPI_URL`)
 - Las variables `VITE_*` se hornean en el bundle en tiempo de build. Para cambiar `VITE_STRAPI_URL` en producción hay que recompilar la imagen.
 - **Nunca poner secretos en variables `VITE_*`** — quedan visibles en el JS del navegador.
+- **Phase 1.5 nuevas variables:**
+  - `PREVIEW_SECRET` — Token compartido para Live Preview (backend y frontend)
+  - `SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE`, `SMTP_USER`, `SMTP_PASS` — Configuración de email
+  - `EMAIL_FROM`, `EMAIL_REPLY_TO` — Remitente por defecto para correos del sistema
 
 ### Docker — red y volúmenes
 
@@ -443,3 +511,5 @@ docker compose exec -T mariadb \
 | Docker frontend | `frontend/docs/docker.md` |
 | Despliegue completo | `frontend/docs/despliegue.md` |
 | Guía editorial | `frontend/docs/guia-editorial.md` |
+| **Plan Fase 1.5** | `docs/plan-fase-1.5.md` |
+| **Webhook invalidación caché** | `docs/webhook-cache-invalidation.md` |
