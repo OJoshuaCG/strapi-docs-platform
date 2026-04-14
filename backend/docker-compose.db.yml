@@ -1,0 +1,46 @@
+# ─── docker-compose.db.yml ────────────────────────────────────────────────────
+# Override que levanta MariaDB como contenedor local.
+#
+# Uso:
+#   docker compose -f docker-compose.yml -f docker-compose.db.yml up [--build]
+#
+# Sin este override, Strapi espera una base de datos externa definida en .env
+# mediante DATABASE_HOST (por defecto: host.docker.internal).
+# ──────────────────────────────────────────────────────────────────────────────
+
+services:
+
+  # ─── MariaDB ────────────────────────────────────────────────────────────────
+  # Internal only — no host port exposed intentionally.
+  mariadb:
+    image: mariadb:10.11
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DATABASE_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${DATABASE_NAME}
+      MYSQL_USER: ${DATABASE_USERNAME}
+      MYSQL_PASSWORD: ${DATABASE_PASSWORD}
+    volumes:
+      - mariadb_data:/var/lib/mysql
+    networks:
+      - doc-network
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  # ─── Strapi (override parcial) ──────────────────────────────────────────────
+  # Solo sobreescribe lo que cambia respecto al archivo base:
+  #   - DATABASE_HOST apunta al contenedor mariadb (en vez de host.docker.internal)
+  #   - depends_on espera a que mariadb pase su healthcheck
+  strapi:
+    environment:
+      DATABASE_HOST: mariadb
+    depends_on:
+      mariadb:
+        condition: service_healthy
+
+volumes:
+  mariadb_data:
