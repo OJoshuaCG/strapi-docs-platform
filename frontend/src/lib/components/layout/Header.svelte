@@ -1,15 +1,39 @@
 <script lang="ts">
   import { page } from '$app/state';
   import { browser } from '$app/environment';
-  import type { SupportedLocale } from '$lib/types/strapi';
+  import { STRAPI_URL } from '$lib/api/strapi';
+  import type { SupportedLocale, StrapiImageData } from '$lib/types/strapi';
 
   interface Props {
     locale: SupportedLocale;
     sidebarOpen?: boolean;
     onsidebarToggle?: () => void;
+    headerLinkText?: string | null;
+    headerLinkUrl?: string | null;
+    sidebarLogo?: StrapiImageData | null;
+    headerLogoSize?: 'sm' | 'md' | 'lg' | 'xl' | null;
   }
 
-  let { locale, sidebarOpen = false, onsidebarToggle }: Props = $props();
+  let { locale, sidebarOpen = false, onsidebarToggle, headerLinkText = null, headerLinkUrl = null, sidebarLogo = null, headerLogoSize = 'md' }: Props = $props();
+
+  // Build logo URL if it exists
+  const logoUrl = $derived.by(() => {
+    if (!sidebarLogo?.url) return null;
+    return sidebarLogo.url.startsWith('http')
+      ? sidebarLogo.url
+      : `${STRAPI_URL}${sidebarLogo.url}`;
+  });
+
+  // Map size to Tailwind class
+  const logoSizeClass = $derived.by(() => {
+    const sizes: Record<string, string> = {
+      sm: 'h-5 w-auto',    // 20px
+      md: 'h-7 w-auto',    // 28px
+      lg: 'h-9 w-auto',    // 36px
+      xl: 'h-11 w-auto',   // 44px
+    };
+    return sizes[headerLogoSize ?? 'md'] ?? sizes['md'];
+  });
 
   // Dark mode toggle — persisted in localStorage
   let dark = $state(browser ? localStorage.getItem('theme') === 'dark' : false);
@@ -59,10 +83,26 @@
   <!-- Logo / home link -->
   <a
     href="/{locale}"
-    class="font-semibold text-[var(--text-primary)] hover:text-[var(--color-brand-600)] transition-colors text-sm"
+    class="flex items-center gap-2 font-semibold text-[var(--text-primary)] hover:text-[var(--color-brand-600)] transition-colors text-sm"
   >
-    Documentación
+    {#if logoUrl}
+      <img src={logoUrl} alt="Logo" class={logoSizeClass} />
+    {:else}
+      Documentación
+    {/if}
   </a>
+
+  <!-- Custom header link (only show if both text and URL are defined) -->
+  {#if headerLinkText && headerLinkUrl}
+    <a
+      href={headerLinkUrl}
+      target="_blank"
+      rel="noopener noreferrer"
+      class="font-semibold text-[var(--text-secondary)] hover:text-[var(--color-brand-600)] transition-colors text-sm"
+    >
+      {headerLinkText}
+    </a>
+  {/if}
 
   <div class="flex-1"></div>
 

@@ -32,6 +32,27 @@
       "required": false,
       "allowedTypes": ["images"]
     },
+    "sidebarLogo": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": ["images"]
+    },
+    "headerLogoSize": {
+      "type": "enumeration",
+      "enum": ["sm", "md", "lg", "xl"],
+      "default": "md",
+      "required": false
+    },
+    "headerLinkText": {
+      "type": "string",
+      "required": false,
+      "maxLength": 50
+    },
+    "headerLinkUrl": {
+      "type": "string",
+      "required": false
+    },
     "ogDefaultImage": {
       "type": "media",
       "multiple": false,

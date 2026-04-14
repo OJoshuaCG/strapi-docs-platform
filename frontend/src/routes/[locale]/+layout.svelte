@@ -3,9 +3,10 @@
   import Sidebar from '$lib/components/layout/Sidebar.svelte';
   import Footer from '$lib/components/layout/Footer.svelte';
   import type { LayoutData } from './$types';
+  import type { GlobalSettings } from '$lib/types/strapi';
 
   interface Props {
-    data: LayoutData;
+    data: LayoutData & { settings: GlobalSettings | null };
     children: import('svelte').Snippet;
   }
 
@@ -23,6 +24,10 @@
   locale={data.locale}
   {sidebarOpen}
   onsidebarToggle={() => (sidebarOpen = !sidebarOpen)}
+  headerLinkText={data.settings?.headerLinkText ?? null}
+  headerLinkUrl={data.settings?.headerLinkUrl ?? null}
+  sidebarLogo={data.settings?.sidebarLogo ?? null}
+  headerLogoSize={data.settings?.headerLogoSize ?? 'md'}
 />
 
 <Sidebar

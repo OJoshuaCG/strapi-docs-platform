@@ -245,6 +245,10 @@ export interface GlobalSettings {
   siteName: string;
   siteDescription: string | null;
   favicon: StrapiImageData | null;
+  sidebarLogo: StrapiImageData | null;
+  headerLogoSize: 'sm' | 'md' | 'lg' | 'xl' | null;
+  headerLinkText: string | null;
+  headerLinkUrl: string | null;
   ogDefaultImage: StrapiImageData | null;
   footerText: string | null;
   typography?: ThemeTypography | null;
