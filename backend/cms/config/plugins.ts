@@ -61,7 +61,6 @@ const config = ({ env }: Core.Config.Shared.ConfigParams): Core.Config.Plugin =>
     // ─── Color Picker Plugin ──────────────────────────────────────────────
     'color-picker': {
       enabled: true,
-      resolve: './node_modules/@strapi/plugin-color-picker',
     },
   };
 };
