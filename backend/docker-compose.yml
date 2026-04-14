@@ -117,6 +117,9 @@ services:
       HOST: 0.0.0.0
       PORT: 3000
       ORIGIN: ${FRONTEND_URL:-http://localhost:5173}
+      # Internal Docker network URL for SSR → Strapi requests.
+      # The browser still uses VITE_STRAPI_URL (baked at build time).
+      STRAPI_INTERNAL_URL: http://strapi:1337
     depends_on:
       strapi:
         condition: service_healthy

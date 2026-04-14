@@ -1,0 +1,44 @@
+{
+  "collectionName": "components_theme_layout",
+  "info": {
+    "displayName": "Layout",
+    "icon": "layout",
+    "description": "Layout and container settings"
+  },
+  "options": {},
+  "attributes": {
+    "maxContentWidth": {
+      "type": "string",
+      "default": "72rem",
+      "required": false,
+      "comment": "Max width for content (max-w-6xl = 72rem)"
+    },
+    "tocWidth": {
+      "type": "string",
+      "default": "14rem",
+      "required": false,
+      "comment": "Table of contents sidebar width (w-56)"
+    },
+    "borderRadius": {
+      "type": "string",
+      "default": "0.5rem",
+      "required": false,
+      "comment": "Default border radius (rounded-lg)"
+    },
+    "codeBorderRadius": {
+      "type": "string",
+      "default": "0.5rem",
+      "required": false
+    },
+    "transitionDuration": {
+      "type": "string",
+      "default": "0.2s",
+      "required": false
+    },
+    "animationEasing": {
+      "type": "string",
+      "default": "cubic-bezier(0.4, 0, 0.2, 1)",
+      "required": false
+    }
+  }
+}

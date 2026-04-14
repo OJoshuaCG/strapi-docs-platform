@@ -1,0 +1,236 @@
+{
+  "collectionName": "components_theme_colors",
+  "info": {
+    "displayName": "Colors",
+    "icon": "palette",
+    "description": "Light and dark mode color tokens"
+  },
+  "options": {},
+  "attributes": {
+    "lightBgPrimary": {
+      "type": "customField",
+      "customField": "plugin::color-picker.color",
+      "default": "#ffffff",
+      "required": false,
+      "pluginOptions": {
+        "description": "Fondo principal de la página (modo claro). Afecta el área de contenido"
+      }
+    },
+    "lightBgSecondary": {
+      "type": "customField",
+      "customField": "plugin::color-picker.color",
+      "default": "#f8fafc",
+      "required": false,
+      "pluginOptions": {
+        "description": "Fondo de elementos secundarios: tablas, hover states (modo claro)"
+      }
+    },
+    "lightBgSidebar": {
+      "type": "customField",
+      "customField": "plugin::color-picker.color",
+      "default": "#f1f5f9",
+      "required": false,
+      "pluginOptions": {
+        "description": "Fondo del menú lateral izquierdo (modo claro)"
+      }
+    },
+    "lightTextPrimary": {
+      "type": "customField",
+      "customField": "plugin::color-picker.color",
+      "default": "#0f172a",
+      "required": false,
+      "pluginOptions": {
+        "description": "Color del texto principal de artículos (modo claro)"
+      }
+    },
+    "lightTextSecondary": {
+      "type": "customField",
+      "customField": "plugin::color-picker.color",
+      "default": "#475569",
+      "required": false,
+      "pluginOptions": {
+        "description": "Texto secundario: subtítulos, descripciones (modo claro)"
+      }
+    },
+    "lightTextMuted": {
+      "type": "customField",
+      "customField": "plugin::color-picker.color",
+      "default": "#94a3b8",
+      "required": false,
+      "pluginOptions": {
+        "description": "Texto tenue: fechas, metadatos, paginación (modo claro)"
+      }
+    },
+    "lightBorderColor": {
+      "type": "customField",
+      "customField": "plugin::color-picker.color",
+      "default": "#e2e8f0",
+      "required": false,
+      "pluginOptions": {
+        "description": "Líneas divisoras, bordes de cards y tablas (modo claro)"
+      }
+    },
+    "lightCodeBg": {
+      "type": "customField",
+      "customField": "plugin::color-picker.color",
+      "default": "#f1f5f9",
+      "required": false,
+      "pluginOptions": {
+        "description": "Fondo de bloques de código inline y en bloque (modo claro)"
+      }
+    },
+    "lightCodeText": {
+      "type": "customField",
+      "customField": "plugin::color-picker.color",
+      "default": "#0f172a",
+      "required": false,
+      "pluginOptions": {
+        "description": "Color del texto dentro de bloques de código (modo claro)"
+      }
+    },
+    "lightCalloutBg": {
+      "type": "customField",
+      "customField": "plugin::color-picker.color",
+      "default": "#eff6ff",
+      "required": false,
+      "pluginOptions": {
+        "description": "Fondo de notas/callouts informativos (modo claro)"
+      }
+    },
+    "lightCalloutBorder": {
+      "type": "customField",
+      "customField": "plugin::color-picker.color",
+      "default": "#3b82f6",
+      "required": false,
+      "pluginOptions": {
+        "description": "Borde izquierdo de callouts — color de acento visual (modo claro)"
+      }
+    },
+    "darkBgPrimary": {
+      "type": "customField",
+      "customField": "plugin::color-picker.color",
+      "default": "#0f172a",
+      "required": false,
+      "pluginOptions": {
+        "description": "Fondo principal de la página (modo oscuro)"
+      }
+    },
+    "darkBgSecondary": {
+      "type": "customField",
+      "customField": "plugin::color-picker.color",
+      "default": "#1e293b",
+      "required": false,
+      "pluginOptions": {
+        "description": "Fondo de elementos secundarios (modo oscuro)"
+      }
+    },
+    "darkBgSidebar": {
+      "type": "customField",
+      "customField": "plugin::color-picker.color",
+      "default": "#1e293b",
+      "required": false,
+      "pluginOptions": {
+        "description": "Fondo del menú lateral izquierdo (modo oscuro)"
+      }
+    },
+    "darkTextPrimary": {
+      "type": "customField",
+      "customField": "plugin::color-picker.color",
+      "default": "#f1f5f9",
+      "required": false,
+      "pluginOptions": {
+        "description": "Color del texto principal de artículos (modo oscuro)"
+      }
+    },
+    "darkTextSecondary": {
+      "type": "customField",
+      "customField": "plugin::color-picker.color",
+      "default": "#94a3b8",
+      "required": false,
+      "pluginOptions": {
+        "description": "Texto secundario (modo oscuro)"
+      }
+    },
+    "darkTextMuted": {
+      "type": "customField",
+      "customField": "plugin::color-picker.color",
+      "default": "#475569",
+      "required": false,
+      "pluginOptions": {
+        "description": "Texto tenue: fechas, metadatos (modo oscuro)"
+      }
+    },
+    "darkBorderColor": {
+      "type": "customField",
+      "customField": "plugin::color-picker.color",
+      "default": "#334155",
+      "required": false,
+      "pluginOptions": {
+        "description": "Líneas divisoras y bordes (modo oscuro)"
+      }
+    },
+    "darkCodeBg": {
+      "type": "customField",
+      "customField": "plugin::color-picker.color",
+      "default": "#1e293b",
+      "required": false,
+      "pluginOptions": {
+        "description": "Fondo de bloques de código (modo oscuro)"
+      }
+    },
+    "darkCodeText": {
+      "type": "customField",
+      "customField": "plugin::color-picker.color",
+      "default": "#e2e8f0",
+      "required": false,
+      "pluginOptions": {
+        "description": "Color del texto dentro de código (modo oscuro)"
+      }
+    },
+    "darkCalloutBg": {
+      "type": "customField",
+      "customField": "plugin::color-picker.color",
+      "default": "#1e3a8a",
+      "required": false,
+      "pluginOptions": {
+        "description": "Fondo de callouts (modo oscuro)"
+      }
+    },
+    "darkCalloutBorder": {
+      "type": "customField",
+      "customField": "plugin::color-picker.color",
+      "default": "#60a5fa",
+      "required": false,
+      "pluginOptions": {
+        "description": "Borde izquierdo de callouts (modo oscuro)"
+      }
+    },
+    "brand50": {
+      "type": "customField",
+      "customField": "plugin::color-picker.color",
+      "default": "#eff6ff",
+      "required": false,
+      "pluginOptions": {
+        "description": "Versión muy clara del color de marca — fondos hover, highlights suaves"
+      }
+    },
+    "brand500": {
+      "type": "customField",
+      "customField": "plugin::color-picker.color",
+      "default": "#3b82f6",
+      "required": false,
+      "pluginOptions": {
+        "description": "Color principal de marca — links, botones activos, ítem activo en sidebar"
+      }
+    },
+    "brand900": {
+      "type": "customField",
+      "customField": "plugin::color-picker.color",
+      "default": "#1e3a8a",
+      "required": false,
+      "pluginOptions": {
+        "description": "Versión oscura del color de marca — callouts y acentos en modo oscuro"
+      }
+    }
+  }
+}

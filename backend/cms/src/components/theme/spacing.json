@@ -1,0 +1,41 @@
+{
+  "collectionName": "components_theme_spacing",
+  "info": {
+    "displayName": "Spacing",
+    "icon": "expand",
+    "description": "Global spacing tokens (padding, margins, gaps)"
+  },
+  "options": {},
+  "attributes": {
+    "contentPaddingX": {
+      "type": "string",
+      "default": "1.5rem",
+      "required": false,
+      "comment": "Horizontal padding for content (px-6)"
+    },
+    "contentPaddingY": {
+      "type": "string",
+      "default": "2rem",
+      "required": false,
+      "comment": "Vertical padding for content (py-8)"
+    },
+    "sectionGap": {
+      "type": "string",
+      "default": "2rem",
+      "required": false,
+      "comment": "Gap between sections"
+    },
+    "headerHeight": {
+      "type": "string",
+      "default": "3.5rem",
+      "required": false,
+      "comment": "Header height (h-14)"
+    },
+    "sidebarWidth": {
+      "type": "string",
+      "default": "16rem",
+      "required": false,
+      "comment": "Sidebar width (w-64)"
+    }
+  }
+}
