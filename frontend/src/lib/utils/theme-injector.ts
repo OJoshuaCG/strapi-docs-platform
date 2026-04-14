@@ -17,6 +17,9 @@ export function settingsToCssVariables(settings: GlobalSettings): string {
     if (typography.fontMono) {
       cssVars.push(`--font-mono: "${typography.fontMono}", ui-monospace, monospace;`);
     }
+    if (typography.baseFontSize) {
+      cssVars.push(`--font-size-base: ${typography.baseFontSize};`);
+    }
     if (typography.baseLineHeight) {
       cssVars.push(`--line-height-base: ${typography.baseLineHeight};`);
     }

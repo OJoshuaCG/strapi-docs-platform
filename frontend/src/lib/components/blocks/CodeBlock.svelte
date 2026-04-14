@@ -13,6 +13,7 @@
   import sql from 'highlight.js/lib/languages/sql';
   import yaml from 'highlight.js/lib/languages/yaml';
   import markdown from 'highlight.js/lib/languages/markdown';
+  import plaintext from 'highlight.js/lib/languages/plaintext';
 
   // Register languages
   hljs.registerLanguage('javascript', javascript);
@@ -33,6 +34,8 @@
   hljs.registerLanguage('yml', yaml);
   hljs.registerLanguage('markdown', markdown);
   hljs.registerLanguage('md', markdown);
+  hljs.registerLanguage('plaintext', plaintext);
+  hljs.registerLanguage('text', plaintext);
 
   interface Props {
     block: StrapiCodeBlock;
@@ -44,7 +47,7 @@
   const language = $derived(block.language ?? 'plaintext');
 
   // Highlight the code
-  const highlightedCode = $derived(() => {
+  const highlightedCode = $derived.by(() => {
     if (!code) return '';
     try {
       const result = hljs.highlight(code, { language: language || 'plaintext' });
@@ -97,5 +100,5 @@
   </div>
 
   <!-- code body -->
-  <pre class="overflow-x-auto p-4 bg-[var(--code-bg)] text-sm leading-6"><code class="font-mono hljs-code-block">{@html highlightedCode()}</code></pre>
+  <pre class="overflow-x-auto p-4 bg-[var(--code-bg)] text-sm leading-6"><code class="font-mono hljs-code-block">{@html highlightedCode}</code></pre>
 </div>

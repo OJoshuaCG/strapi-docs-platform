@@ -46,8 +46,7 @@
   {/if}
   {@html fontsHtml}
   {#if themeCss}
-    <!-- Dynamic theme variables from Strapi settings -->
-    <style>{themeCss}</style>
+    {@html `<style>${themeCss}</style>`}
   {/if}
 </svelte:head>
 

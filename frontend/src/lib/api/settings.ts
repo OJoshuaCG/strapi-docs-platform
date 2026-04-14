@@ -1,4 +1,4 @@
-import { strapiRequest } from './strapi';
+import { strapiRequest, buildQuery } from './strapi';
 import type { GlobalSettings } from '$lib/types/strapi';
 
 /**
@@ -19,10 +19,11 @@ export async function getGlobalSettings(fetchFn?: typeof fetch): Promise<GlobalS
   }
 
   try {
+    const query = buildQuery({ populate: '*' });
     const response = await strapiRequest<{
       data: Array<GlobalSettings>;
       meta: unknown;
-    }>('/global-settings', {}, fetchFn);
+    }>(`/global-settings${query}`, {}, fetchFn);
 
     // Settings should be a single entry (singleton pattern)
     const settings = response.data?.[0] ?? null;

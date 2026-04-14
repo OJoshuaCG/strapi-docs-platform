@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { onMount } from 'svelte';
   import { getGlobalSettings } from '$lib/api/settings';
   import type { GlobalSettings } from '$lib/types/strapi';
 
@@ -6,15 +7,15 @@
 
   let settings = $state<GlobalSettings | null>(null);
   let footerText = $derived(
-    settings?.footerText || 
+    settings?.footerText ||
     (locale === 'es' ? '© 2026 Documentation Portal' : '© 2026 Documentation Portal')
   );
 
-  // Fetch settings on mount (non-blocking)
-  (async () => {
+  // Fetch settings on mount (browser-only, non-blocking)
+  onMount(async () => {
     const s = await getGlobalSettings();
     if (s) settings = s;
-  })();
+  });
 </script>
 
 <footer class="border-t border-[var(--border-color)] bg-[var(--bg-secondary)] py-6 px-6">

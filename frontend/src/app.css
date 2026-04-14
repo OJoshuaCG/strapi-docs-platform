@@ -26,34 +26,44 @@
   --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* ─── Light mode tokens ───────────────────────────────────────────────────── */
-:root {
-  --bg-primary:      #ffffff;
-  --bg-secondary:    #f8fafc;
-  --bg-sidebar:      #f1f5f9;
-  --text-primary:    #0f172a;
-  --text-secondary:  #475569;
-  --text-muted:      #94a3b8;
-  --border-color:    #e2e8f0;
-  --code-bg:         #f1f5f9;
-  --code-text:       #0f172a;
-  --callout-bg:      #eff6ff;
-  --callout-border:  #3b82f6;
-}
+/* ─── Default token values (layered so dynamic theme CSS always wins) ────── */
+/*
+ * Using @layer base ensures these defaults have lower priority than any
+ * unlayered CSS. The dynamic <style> injected by +layout.svelte is unlayered,
+ * so it overrides these fallbacks regardless of DOM insertion order.
+ * Without @layer, Vite injects app.css via JS after SSR, which would override
+ * the dynamically injected theme CSS.
+ */
+@layer base {
+  /* Light mode tokens */
+  :root {
+    --bg-primary:      #ffffff;
+    --bg-secondary:    #f8fafc;
+    --bg-sidebar:      #f1f5f9;
+    --text-primary:    #0f172a;
+    --text-secondary:  #475569;
+    --text-muted:      #94a3b8;
+    --border-color:    #e2e8f0;
+    --code-bg:         #f1f5f9;
+    --code-text:       #0f172a;
+    --callout-bg:      #eff6ff;
+    --callout-border:  #3b82f6;
+  }
 
-/* ─── Dark mode tokens ────────────────────────────────────────────────────── */
-.dark {
-  --bg-primary:      #0f172a;
-  --bg-secondary:    #1e293b;
-  --bg-sidebar:      #1e293b;
-  --text-primary:    #f1f5f9;
-  --text-secondary:  #94a3b8;
-  --text-muted:      #475569;
-  --border-color:    #334155;
-  --code-bg:         #1e293b;
-  --code-text:       #e2e8f0;
-  --callout-bg:      #1e3a8a;
-  --callout-border:  #60a5fa;
+  /* Dark mode tokens */
+  .dark {
+    --bg-primary:      #0f172a;
+    --bg-secondary:    #1e293b;
+    --bg-sidebar:      #1e293b;
+    --text-primary:    #f1f5f9;
+    --text-secondary:  #94a3b8;
+    --text-muted:      #475569;
+    --border-color:    #334155;
+    --code-bg:         #1e293b;
+    --code-text:       #e2e8f0;
+    --callout-bg:      #1e3a8a;
+    --callout-border:  #60a5fa;
+  }
 }
 
 /* ─── Base reset ──────────────────────────────────────────────────────────── */
@@ -63,6 +73,7 @@
 
 html {
   scroll-behavior: smooth;
+  font-size: var(--font-size-base, 16px);
 }
 
 body {
