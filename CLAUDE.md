@@ -496,7 +496,8 @@ docker compose exec -T mariadb \
 | MariaDB | `backend/docs/mariadb.md` |
 | Wasabi S3 | `backend/docs/wasabi-s3.md` |
 | Meilisearch | `backend/docs/meilisearch.md` |
-| Despliegue backend | `backend/docs/despliegue.md` |
+| Despliegue backend (Docker/VPS) | `backend/docs/despliegue.md` |
+| **Despliegue backend en cPanel** | `backend/docs/despliegue-cpanel.md` |
 | Mantenimiento DevOps | `backend/docs/maintenance.md` |
 | Troubleshooting backend | `backend/docs/troubleshooting.md` |
 | Frontend — entrada principal | `frontend/README.md` |
