@@ -2,10 +2,10 @@ import type { Core } from '@strapi/strapi';
 
 const config = ({ env }: Core.Config.Shared.ConfigParams): Core.Config.Admin => ({
   auth: {
-    secret: env('ADMIN_JWT_SECRET'),
+    secret: env('ADMIN_JWT_SECRET', ''),
   },
   apiToken: {
-    salt: env('API_TOKEN_SALT'),
+    salt: env('API_TOKEN_SALT', ''),
   },
   transfer: {
     token: {
@@ -25,7 +25,7 @@ const config = ({ env }: Core.Config.Shared.ConfigParams): Core.Config.Admin => 
       allowedOrigins: [env('FRONTEND_URL', 'http://localhost:5173')],
       async handler(
         uid: string,
-        { documentId, locale, status }: { documentId: string; locale: string; status: string },
+        { documentId, locale, status }: { documentId: string; locale?: string; status?: string },
       ) {
         const previewSecret = env('PREVIEW_SECRET', '');
         const frontendUrl = env('FRONTEND_URL', 'http://localhost:5173');
@@ -34,15 +34,11 @@ const config = ({ env }: Core.Config.Shared.ConfigParams): Core.Config.Admin => 
           return null;
         }
 
-        // Build the frontend preview URL with draft parameters
-        const params = new URLSearchParams({
-          secret: previewSecret,
-          documentId,
-          locale,
-          status,
-        });
+        const searchParams: Record<string, string> = { secret: previewSecret, documentId };
+        if (locale) searchParams.locale = locale;
+        if (status) searchParams.status = status;
 
-        return `${frontendUrl}/api/preview?${params.toString()}`;
+        return `${frontendUrl}/api/preview?${new URLSearchParams(searchParams).toString()}`;
       },
     },
   },
