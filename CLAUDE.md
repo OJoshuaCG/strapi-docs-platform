@@ -510,7 +510,8 @@ docker compose exec -T mariadb \
 | TailwindCSS v4 | `frontend/docs/tailwindcss.md` |
 | Vite 8 | `frontend/docs/vite.md` |
 | Docker frontend | `frontend/docs/docker.md` |
-| Despliegue completo | `frontend/docs/despliegue.md` |
+| Despliegue completo (Docker + nginx) | `frontend/docs/despliegue.md` |
+| **Despliegue en cPanel (Node.js App)** | `frontend/docs/despliegue-cpanel.md` |
 | Guía editorial | `frontend/docs/guia-editorial.md` |
 | **Plan Fase 1.5** | `docs/plan-fase-1.5.md` |
 | **Webhook invalidación caché** | `docs/webhook-cache-invalidation.md` |
