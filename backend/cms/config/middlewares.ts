@@ -43,6 +43,8 @@ const config = ({ env }: Core.Config.Shared.ConfigParams): Core.Config.Middlewar
   },
   'strapi::poweredBy',
   'strapi::query',
+  // Filtro de espacio de documentación — debe ir después de strapi::query (query params ya parseados)
+  { name: 'global::documentation-space-filter' },
   'strapi::body',
   'strapi::session',
   'strapi::favicon',

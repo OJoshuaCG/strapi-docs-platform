@@ -15,13 +15,14 @@ Portal de documentación técnica multidioma (español / inglés) compuesto por:
 El equipo editorial gestiona contenido desde el panel admin de Strapi sin tocar código.
 El frontend renderiza ese contenido mediante SSR para SEO.
 
-### Estado actual (2026-04-13)
+### Estado actual (2026-04-22)
 
 | Fase | Estado |
 |---|---|
 | Phase 1 — Backend completo | ✅ Completo |
 | Phase 1 — Frontend completo | ✅ Completo |
 | **Phase 1.5 — Admin improvements** | ✅ **Completo** |
+| **Multi-documentación (backend)** | ✅ **Completo** |
 | Phase 2 — Búsqueda (Meilisearch + Python RAG) | 🔲 Sin empezar |
 | Phase 2 — Reverse proxy nginx/Caddy | 🔲 Sin empezar |
 
@@ -222,6 +223,15 @@ npm run preview      # preview del build
 
 ## Modelo de datos (Content Types)
 
+### `documentation-space` ← NUEVO
+
+| Campo | Tipo | Notas |
+|---|---|---|
+| `name` | string | Requerido, único |
+| `slug` | uid (desde name) | Requerido, auto-generado |
+| `description` | text | Opcional |
+| `is_active` | boolean | Default: true. Desactiva sin eliminar |
+
 ### `documentation-category`
 
 | Campo | Tipo | Localizable | Notas |
@@ -231,6 +241,7 @@ npm run preview      # preview del build
 | `description` | text | ✅ | Opcional |
 | `order` | integer | ❌ | Compartido entre locales |
 | `articles` | oneToMany → article | — | Relación inversa |
+| `documentation_space` | manyToOne → space | — | **NUEVO** — espacio al que pertenece |
 
 ### `documentation-article`
 
@@ -242,6 +253,7 @@ npm run preview      # preview del build
 | `excerpt` | text (max 300) | ✅ | Para listados |
 | `version` | string | ❌ | Compartido entre locales |
 | `category` | manyToOne → category | — | — |
+| `documentation_space` | manyToOne → space | — | **NUEVO** — espacio al que pertenece |
 
 **Ambos tipos tienen `draftAndPublish: true` e i18n habilitado.**  
 La API pública (sin token) solo retorna entradas `publishedAt != null`.
@@ -356,6 +368,15 @@ export const load: PageLoad = async ({ params }) => {
 - Usa `var(--bg-primary)`, `var(--text-primary)`, etc. para todo lo que dependa del tema light/dark.
 - **No usar `@apply`** — tiene soporte limitado en v4. Prefiere componentes Svelte.
 - El modo oscuro se activa con la clase `.dark` en `<html>`, gestionado desde `Header.svelte`.
+
+### Multi-documentación — convenciones clave
+
+- Cada frontend consume **un único espacio** identificado por `?space=<slug>` en cada petición.
+- El middleware `global::documentation-space-filter` (`src/middlewares/documentation-space-filter.ts`) intercepta `GET /api/documentation-categories` y `GET /api/documentation-articles`, valida el param `space` e inyecta el filtro automáticamente.
+- El endpoint `GET /api/documentation-spaces` **no** requiere el param `space` (lista todos los espacios activos).
+- El lifecycle hook en `src/api/documentation-article/content-types/documentation-article/lifecycles.ts` valida que la categoría de un artículo pertenezca al mismo espacio.
+- Al crear un nuevo espacio: crear registro en Content Manager → crear API Token Read-only → configurar frontend con `DOCUMENTATION_SPACE_SLUG`.
+- **Variables de entorno mínimas por frontend:** `STRAPI_API_URL`, `STRAPI_API_TOKEN`, `DOCUMENTATION_SPACE_SLUG`.
 
 ### Strapi — convenciones de extensión
 
@@ -480,6 +501,9 @@ docker compose exec -T mariadb \
 | `cms_node_modules` desactualizado | `package.json` cambió sin reconstruir | `docker compose down && docker volume rm backend_cms_node_modules && docker compose up --build` |
 | Frontend no refleja cambios de Strapi | Caché de 30s en browser | Hard reload (`Ctrl+Shift+R`) |
 | `node: command not found` en frontend | Node version incorrecta | Necesita Node 22 (`nvm install 22 && nvm use 22`) |
+| `400 El parámetro space es obligatorio` | Frontend no envía `?space=` | Agregar `DOCUMENTATION_SPACE_SLUG` al env del frontend y usarlo en cada petición |
+| `400 El espacio de documentación no existe` | Slug incorrecto o `is_active: false` | Verificar el slug en Content Manager → Documentation Spaces |
+| Artículos de otros espacios aparecen mezclados | Middleware no está registrado | Verificar que `global::documentation-space-filter` está en `config/middlewares.ts` y reiniciar Strapi |
 
 ---
 

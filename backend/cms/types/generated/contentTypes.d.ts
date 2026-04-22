@@ -441,6 +441,7 @@ export interface ApiDocumentationArticleDocumentationArticle
   };
   options: {
     draftAndPublish: true;
+    previewable: true;
   };
   pluginOptions: {
     i18n: {
@@ -462,6 +463,10 @@ export interface ApiDocumentationArticleDocumentationArticle
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
+    documentation_space: Schema.Attribute.Relation<
+      'manyToOne',
+      'api::documentation-space.documentation-space'
+    >;
     excerpt: Schema.Attribute.Text &
       Schema.Attribute.SetPluginOptions<{
         i18n: {
@@ -476,7 +481,35 @@ export interface ApiDocumentationArticleDocumentationArticle
       'oneToMany',
       'api::documentation-article.documentation-article'
     >;
+    ogImage: Schema.Attribute.Media<'images'> &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: false;
+        };
+      }>;
+    order: Schema.Attribute.Integer &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: false;
+        };
+      }> &
+      Schema.Attribute.DefaultTo<0>;
     publishedAt: Schema.Attribute.DateTime;
+    seoDescription: Schema.Attribute.Text &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }> &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 160;
+      }>;
+    seoTitle: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
     slug: Schema.Attribute.UID<'title'> &
       Schema.Attribute.Required &
       Schema.Attribute.SetPluginOptions<{
@@ -534,6 +567,10 @@ export interface ApiDocumentationCategoryDocumentationCategory
           localized: true;
         };
       }>;
+    documentation_space: Schema.Attribute.Relation<
+      'manyToOne',
+      'api::documentation-space.documentation-space'
+    >;
     locale: Schema.Attribute.String;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
@@ -560,6 +597,97 @@ export interface ApiDocumentationCategoryDocumentationCategory
           localized: true;
         };
       }>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiDocumentationSpaceDocumentationSpace
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'documentation_spaces';
+  info: {
+    description: 'Espacio de documentaci\u00F3n independiente. Cada instancia agrupa sus propias categor\u00EDas y art\u00EDculos.';
+    displayName: 'Documentation Space';
+    pluralName: 'documentation-spaces';
+    singularName: 'documentation-space';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    description: Schema.Attribute.Text;
+    is_active: Schema.Attribute.Boolean &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<true>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::documentation-space.documentation-space'
+    > &
+      Schema.Attribute.Private;
+    name: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.Unique;
+    publishedAt: Schema.Attribute.DateTime;
+    slug: Schema.Attribute.UID<'name'> & Schema.Attribute.Required;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiGlobalSettingGlobalSetting
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'global_settings';
+  info: {
+    description: 'Site-wide design tokens, typography, spacing, and theme configuration';
+    displayName: 'Global Settings';
+    pluralName: 'global-settings';
+    singularName: 'global-setting';
+  };
+  options: {
+    comment: '';
+    draftAndPublish: false;
+  };
+  pluginOptions: {
+    i18n: {
+      localized: false;
+    };
+  };
+  attributes: {
+    colors: Schema.Attribute.Component<'theme.colors', false>;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    favicon: Schema.Attribute.Media<'images'>;
+    footerText: Schema.Attribute.String;
+    headerLinkText: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 50;
+      }>;
+    headerLinkUrl: Schema.Attribute.String;
+    headerLogoSize: Schema.Attribute.Enumeration<['sm', 'md', 'lg', 'xl']> &
+      Schema.Attribute.DefaultTo<'md'>;
+    layout: Schema.Attribute.Component<'theme.layout', false>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::global-setting.global-setting'
+    > &
+      Schema.Attribute.Private;
+    ogDefaultImage: Schema.Attribute.Media<'images'>;
+    publishedAt: Schema.Attribute.DateTime;
+    sidebarLogo: Schema.Attribute.Media<'images'>;
+    siteDescription: Schema.Attribute.Text;
+    siteName: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<'Documentation Portal'>;
+    spacing: Schema.Attribute.Component<'theme.spacing', false>;
+    typography: Schema.Attribute.Component<'theme.typography', false>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -1079,6 +1207,8 @@ declare module '@strapi/strapi' {
       'admin::user': AdminUser;
       'api::documentation-article.documentation-article': ApiDocumentationArticleDocumentationArticle;
       'api::documentation-category.documentation-category': ApiDocumentationCategoryDocumentationCategory;
+      'api::documentation-space.documentation-space': ApiDocumentationSpaceDocumentationSpace;
+      'api::global-setting.global-setting': ApiGlobalSettingGlobalSetting;
       'plugin::content-releases.release': PluginContentReleasesRelease;
       'plugin::content-releases.release-action': PluginContentReleasesReleaseAction;
       'plugin::i18n.locale': PluginI18NLocale;

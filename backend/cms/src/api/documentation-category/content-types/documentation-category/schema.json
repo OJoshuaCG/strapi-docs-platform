@@ -56,6 +56,11 @@
       "relation": "oneToMany",
       "target": "api::documentation-article.documentation-article",
       "mappedBy": "category"
+    },
+    "documentation_space": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::documentation-space.documentation-space"
     }
   }
 }
