@@ -7,10 +7,12 @@ const PUBLIC_PERMISSIONS = [
   'api::documentation-article.documentation-article.findOne',
   'api::documentation-category.documentation-category.find',
   'api::documentation-category.documentation-category.findOne',
+  'api::documentation-section.documentation-section.find',
+  'api::documentation-section.documentation-section.findOne',
   'api::documentation-space.documentation-space.find',
   'api::documentation-space.documentation-space.findOne',
-  'api::global-setting.global-setting.find',
-  'api::global-setting.global-setting.findOne',
+  'api::documentation-space-setting.documentation-space-setting.find',
+  'api::documentation-space-setting.documentation-space-setting.findOne',
 ];
 
 async function configurePublicPermissions(strapi: Core.Strapi): Promise<void> {

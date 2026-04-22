@@ -1,11 +1,11 @@
 {
   "kind": "collectionType",
-  "collectionName": "documentation_categories",
+  "collectionName": "documentation_sections",
   "info": {
-    "singularName": "documentation-category",
-    "pluralName": "documentation-categories",
-    "displayName": "Documentation Category",
-    "description": "Categories for grouping documentation articles"
+    "singularName": "documentation-section",
+    "pluralName": "documentation-sections",
+    "displayName": "Documentation Section",
+    "description": "Sección de navegación principal (navbar). Agrupa categorías del sidebar bajo un ítem de primer nivel."
   },
   "options": {
     "draftAndPublish": true
@@ -45,23 +45,31 @@
     },
     "order": {
       "type": "integer",
+      "default": 0,
       "pluginOptions": {
         "i18n": {
           "localized": false
         }
       }
     },
-    "articles": {
-      "type": "relation",
-      "relation": "oneToMany",
-      "target": "api::documentation-article.documentation-article",
-      "mappedBy": "category"
+    "icon": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": false
+        }
+      }
     },
-    "documentation_section": {
+    "documentation_space": {
       "type": "relation",
       "relation": "manyToOne",
-      "target": "api::documentation-section.documentation-section",
-      "inversedBy": "documentation_categories"
+      "target": "api::documentation-space.documentation-space"
+    },
+    "documentation_categories": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::documentation-category.documentation-category",
+      "mappedBy": "documentation_section"
     }
   }
 }

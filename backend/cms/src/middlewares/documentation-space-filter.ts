@@ -1,20 +1,25 @@
 import type { Core } from '@strapi/strapi';
 
 /**
- * Middleware que garantiza el aislamiento entre espacios de documentación.
+ * Garantiza el aislamiento entre espacios de documentación filtrando
+ * a través de la cadena de relaciones: space → section → category → article
  *
- * Aplica a: GET /api/documentation-categories[/:id]
- *            GET /api/documentation-articles[/:id]
+ * Endpoints protegidos (requieren ?space=<slug>):
+ *   GET /api/documentation-sections        — filtra por section.documentation_space
+ *   GET /api/documentation-categories      — filtra por category.documentation_section.documentation_space
+ *   GET /api/documentation-articles        — filtra por article.category.documentation_section.documentation_space
+ *   GET /api/documentation-space-settings  — filtra por setting.documentation_space
  *
- * Requiere el query param ?space=<slug>. Si el espacio no existe o está
- * inactivo responde 400. Si el param está ausente también responde 400.
- * Inyecta automáticamente el filtro de espacio para que el controller
- * de Strapi solo devuelva registros del espacio solicitado.
+ * Parámetro opcional ?section=<slug>:
+ *   categories: filtra además por documentation_section.slug
+ *   articles:   filtra además por category.documentation_section.slug
  */
 
 const FILTERED_PREFIXES = [
+  '/api/documentation-sections',
   '/api/documentation-categories',
   '/api/documentation-articles',
+  '/api/documentation-space-settings',
 ];
 
 export default (_config: unknown, { strapi }: { strapi: Core.Strapi }) => {
@@ -22,10 +27,7 @@ export default (_config: unknown, { strapi }: { strapi: Core.Strapi }) => {
     const { method, path } = ctx.request as { method: string; path: string };
 
     const isFiltered = FILTERED_PREFIXES.some((prefix) => path.startsWith(prefix));
-
-    if (method !== 'GET' || !isFiltered) {
-      return next();
-    }
+    if (method !== 'GET' || !isFiltered) return next();
 
     const space = ctx.query?.space as string | undefined;
 
@@ -41,22 +43,42 @@ export default (_config: unknown, { strapi }: { strapi: Core.Strapi }) => {
 
     if (!spaceRecord) {
       ctx.status = 400;
-      ctx.body = {
-        error: { message: 'El espacio de documentación no existe o está inactivo.' },
-      };
+      ctx.body = { error: { message: 'El espacio de documentación no existe o está inactivo.' } };
       return;
     }
 
-    // Inyectar filtro de espacio sin pisar filtros existentes del frontend
-    if (!ctx.query.filters) {
-      ctx.query.filters = {};
-    }
-    ctx.query.filters['documentation_space'] = {
-      slug: { $eq: space },
-    };
+    if (!ctx.query.filters) ctx.query.filters = {};
 
-    // Eliminar el param space para que no interfiera con el query parser de Strapi
+    const section = ctx.query?.section as string | undefined;
+
+    if (path.startsWith('/api/documentation-sections')) {
+      // Relación directa: section → space
+      ctx.query.filters['documentation_space'] = { slug: { $eq: space } };
+
+    } else if (path.startsWith('/api/documentation-space-settings')) {
+      // Relación directa: space-setting → space
+      ctx.query.filters['documentation_space'] = { slug: { $eq: space } };
+
+    } else if (path.startsWith('/api/documentation-categories')) {
+      // Cadena: category → section → space
+      ctx.query.filters['documentation_section'] = {
+        documentation_space: { slug: { $eq: space } },
+        ...(section ? { slug: { $eq: section } } : {}),
+      };
+
+    } else if (path.startsWith('/api/documentation-articles')) {
+      // Cadena: article → category → section → space
+      ctx.query.filters['category'] = {
+        ...(ctx.query.filters['category'] ?? {}),
+        documentation_section: {
+          documentation_space: { slug: { $eq: space } },
+          ...(section ? { slug: { $eq: section } } : {}),
+        },
+      };
+    }
+
     delete ctx.query.space;
+    if (section) delete ctx.query.section;
 
     return next();
   };

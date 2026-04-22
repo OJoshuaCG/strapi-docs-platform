@@ -105,11 +105,6 @@
       "relation": "manyToOne",
       "target": "api::documentation-category.documentation-category",
       "inversedBy": "articles"
-    },
-    "documentation_space": {
-      "type": "relation",
-      "relation": "manyToOne",
-      "target": "api::documentation-space.documentation-space"
     }
   }
 }
