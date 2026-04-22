@@ -10,14 +10,15 @@
 1. [¿Qué es Strapi?](#1-qué-es-strapi)
 2. [Acceder al panel](#2-acceder-al-panel)
 3. [Vista general del panel](#3-vista-general-del-panel)
-4. [Gestionar categorías](#4-gestionar-categorías)
-5. [Gestionar artículos](#5-gestionar-artículos)
-6. [Trabajar con idiomas](#6-trabajar-con-idiomas)
-7. [Borradores y publicación](#7-borradores-y-publicación)
-8. [Biblioteca de medios](#8-biblioteca-de-medios)
-9. [La API REST (para el equipo técnico)](#9-la-api-rest-para-el-equipo-técnico)
-10. [Roles y permisos](#10-roles-y-permisos)
-11. [Preguntas frecuentes](#11-preguntas-frecuentes)
+4. [Gestionar secciones (navbar)](#4-gestionar-secciones-navbar)
+5. [Gestionar categorías](#5-gestionar-categorías)
+6. [Gestionar artículos](#6-gestionar-artículos)
+7. [Trabajar con idiomas](#7-trabajar-con-idiomas)
+8. [Borradores y publicación](#8-borradores-y-publicación)
+9. [Biblioteca de medios](#9-biblioteca-de-medios)
+10. [La API REST (para el equipo técnico)](#10-la-api-rest-para-el-equipo-técnico)
+11. [Roles y permisos](#11-roles-y-permisos)
+12. [Preguntas frecuentes](#12-preguntas-frecuentes)
 
 ---
 
@@ -42,6 +43,24 @@ La diferencia con un CMS tradicional como WordPress es que Strapi **no genera el
 | **Locale** | Idioma/variante regional (ej: `es`, `en`) |
 | **Slug** | Identificador de URL amigable (ej: `como-instalar-docker`) |
 | **Relation** | Relación entre dos tipos de contenido (ej: un artículo pertenece a una categoría) |
+
+### Jerarquía de contenido
+
+El sistema organiza la documentación en **4 niveles**:
+
+| Nivel | Tipo | Quién lo gestiona | Rol en el sitio |
+|---|---|---|---|
+| 1 | **Space (Espacio)** | Administrador técnico | El sitio de documentación completo (un portal por espacio) |
+| 2 | **Section (Sección)** | Editor | Ítems del menú de navegación superior (navbar) |
+| 3 | **Category (Categoría)** | Editor | Títulos de grupo en el sidebar, dentro de una sección |
+| 4 | **Article (Artículo)** | Editor / Redactor | Páginas individuales de documentación |
+
+**Analogía visual** — tomando como referencia docs.livekit.io:
+- Las secciones equivalen a los ítems del navbar: "Agents", "Realtime", "Cloud"
+- Las categorías equivalen a los títulos del sidebar: "Get started", "Concepts", "Guides"
+- Los artículos son las páginas individuales bajo cada grupo del sidebar
+
+**Orden de creación recomendado:** Espacio → Sección → Categoría → Artículo
 
 ---
 
@@ -86,9 +105,12 @@ En la pantalla de login → "Forgot your password?" → introduce tu email → r
 
 ### Content Manager
 
-Tu área de trabajo principal. Aquí verás:
-- **Documentation Articles** — todos los artículos
-- **Documentation Categories** — todas las categorías
+Tu área de trabajo principal. Aquí verás los 4 tipos de contenido:
+
+- **Documentation Spaces** — portales de documentación (solo el administrador técnico)
+- **Documentation Sections** — ítems del navbar, uno por área temática
+- **Documentation Categories** — grupos del sidebar dentro de cada sección
+- **Documentation Articles** — páginas individuales de documentación
 
 ### Media Library
 
@@ -100,21 +122,84 @@ Configuración del sistema: usuarios, roles, permisos de la API, idiomas. Normal
 
 ---
 
-## 4. Gestionar categorías
+## 4. Gestionar secciones (navbar)
 
-Las categorías sirven para agrupar artículos relacionados (ej: "Instalación", "Configuración", "Referencia de API").
+Las secciones son los **ítems del menú de navegación superior** del sitio de documentación. Cada sección agrupa un conjunto de categorías relacionadas temáticamente.
+
+**Ejemplos de secciones:** "Guía de inicio", "Referencia de API", "Conceptos avanzados", "Tutoriales"
+
+> Antes de crear una sección asegúrate de que el espacio de documentación al que pertenece ya existe. Si no lo has hecho, pide al administrador técnico que lo cree.
+
+### Crear una sección
+
+1. **Content Manager** → **Documentation Sections** → **Create new entry**
+2. Rellena los campos:
+
+| Campo | Obligatorio | Descripción |
+|---|---|---|
+| **Name** | Sí | Nombre visible en el navbar (ej: "Guía de inicio") |
+| **Slug** | Sí (auto) | Se genera automáticamente desde el nombre. Puedes editarlo si necesitas una URL específica. |
+| **Description** | No | Descripción interna de la sección |
+| **Order** | No | Número entero para controlar el orden de aparición en el navbar (1, 2, 3…). Sin valor, el orden es indefinido. |
+| **Icon** | No | Identificador de texto para el ícono visual (ej: `book`, `api`, `lightning`). Coordina el valor con el desarrollador frontend — son ellos quienes definen qué íconos están disponibles. |
+| **Documentation Space** | Sí | El espacio al que pertenece esta sección. Selecciónalo del desplegable. |
+
+3. Haz clic en **Save** para guardar como borrador
+4. Haz clic en **Publish** para que quede visible en la API
+
+> Las categorías se vinculan a la sección **desde el formulario de cada categoría**, no desde aquí. No es necesario editar la sección una vez creada para añadirle categorías.
+
+### Ordenar las secciones en el navbar
+
+El campo **Order** controla la posición de la sección en el navbar. Usa números enteros:
+- Sección con `Order: 1` aparece primero
+- Sección con `Order: 2` aparece segunda
+- y así sucesivamente
+
+Si dos secciones tienen el mismo número de orden, el sistema las ordenará por orden de creación.
+
+### El campo Icon
+
+El campo **Icon** es un identificador de texto libre — no es la imagen del ícono en sí, sino el nombre que el frontend usa para saber qué ícono mostrar.
+
+Por ejemplo, si el desarrollador frontend ha programado el ícono `book` para secciones de guías, debes escribir exactamente `book` en este campo. Si escribes `Book` o `libro`, el frontend no lo reconocerá.
+
+**Siempre consulta con el equipo técnico** qué valores de ícono están disponibles antes de rellenar este campo. Dejarlo vacío es perfectamente válido — el frontend usará un ícono por defecto.
+
+### Editar una sección
+
+1. **Content Manager** → **Documentation Sections**
+2. Haz clic sobre la sección a editar
+3. Modifica los campos y haz clic en **Save**
+4. Si ya estaba publicada, haz clic en **Publish** para que los cambios sean visibles
+
+### Eliminar una sección
+
+1. En la lista de secciones, marca la casilla de la sección
+2. Clic en **Delete** en la barra de acciones superior
+
+> Si eliminas una sección, las categorías que le pertenecían quedan sin sección asignada. No se eliminan las categorías ni los artículos.
+
+---
+
+## 5. Gestionar categorías
+
+Las categorías son los **títulos de grupo del sidebar** dentro de una sección. Agrupan artículos relacionados (ej: "Instalación", "Configuración", "Referencia de API").
+
+> Crea primero el espacio y la sección antes de crear categorías. La categoría debe pertenecer a una sección, y la sección debe pertenecer a un espacio.
 
 ### Crear una categoría
 
 1. **Content Manager** → **Documentation Categories** → **Create new entry**
 2. Rellena los campos:
 
-| Campo | Descripción |
-|---|---|
-| **Name** | Nombre visible de la categoría |
-| **Slug** | Se genera automáticamente desde el nombre. Puedes editarlo si lo necesitas. |
-| **Description** | Descripción opcional |
-| **Order** | Número entero para ordenar categorías manualmente (1, 2, 3…) |
+| Campo | Obligatorio | Descripción |
+|---|---|---|
+| **Name** | Sí | Nombre visible en el sidebar |
+| **Slug** | Sí (auto) | Se genera automáticamente desde el nombre. Puedes editarlo si lo necesitas. |
+| **Description** | No | Descripción opcional |
+| **Order** | No | Número entero para ordenar categorías dentro de la sección (1, 2, 3…) |
+| **Documentation Section** | Sí | La sección del navbar a la que pertenece esta categoría. Selecciónala del desplegable. |
 
 3. Haz clic en **Save** para guardar como borrador
 4. Haz clic en **Publish** para que quede visible en la API
@@ -137,7 +222,7 @@ Las categorías sirven para agrupar artículos relacionados (ej: "Instalación",
 
 ---
 
-## 5. Gestionar artículos
+## 6. Gestionar artículos
 
 ### Crear un artículo
 
@@ -191,7 +276,7 @@ O desde la lista, marca la casilla → **Delete**.
 
 ---
 
-## 6. Trabajar con idiomas
+## 7. Trabajar con idiomas
 
 Este CMS soporta múltiples idiomas. Los configurados son:
 - `es` — Español (idioma por defecto)
@@ -228,7 +313,7 @@ El proceso es el mismo: **Settings** → **Internationalization** → **Add a lo
 
 ---
 
-## 7. Borradores y publicación
+## 8. Borradores y publicación
 
 Cada entrada puede estar en uno de dos estados:
 
@@ -254,7 +339,7 @@ Cada entrada puede estar en uno de dos estados:
 
 ---
 
-## 8. Biblioteca de medios
+## 9. Biblioteca de medios
 
 ### Subir archivos
 
@@ -284,7 +369,7 @@ Haz clic en el archivo → panel lateral derecho:
 
 ---
 
-## 9. La API REST (para el equipo técnico)
+## 10. La API REST (para el equipo técnico)
 
 La API es consumida por el frontend. Esta sección es referencia para desarrolladores.
 
@@ -294,60 +379,88 @@ La API es consumida por el frontend. Esta sección es referencia para desarrolla
 http://localhost:1337/api
 ```
 
+### Parámetro obligatorio: `space`
+
+Todos los endpoints de contenido (artículos, categorías y secciones) requieren el parámetro `?space=<slug>` para identificar a qué portal de documentación pertenece la solicitud. Sin este parámetro la API devuelve un error `400`.
+
+```
+?space=mi-portal
+```
+
+El slug del espacio es definido por el administrador técnico al crear el Documentation Space.
+
 ### Endpoints disponibles
 
-#### Artículos
+#### Secciones (navbar)
 
 ```
-GET /api/documentation-articles
-GET /api/documentation-articles/:documentId
+GET /api/documentation-sections?space=<slug>
+GET /api/documentation-sections/:documentId?space=<slug>
 ```
 
-Solo devuelve artículos **publicados** por defecto.
+Solo devuelve secciones **publicadas** y pertenecientes al espacio indicado.
 
 #### Categorías
 
 ```
-GET /api/documentation-categories
-GET /api/documentation-categories/:documentId
+GET /api/documentation-categories?space=<slug>
+GET /api/documentation-categories/:documentId?space=<slug>
 ```
+
+#### Artículos
+
+```
+GET /api/documentation-articles?space=<slug>
+GET /api/documentation-articles/:documentId?space=<slug>
+```
+
+Solo devuelve artículos **publicados** por defecto.
 
 ### Parámetros útiles
 
 **Filtrar por locale:**
 ```
-GET /api/documentation-articles?locale=en
-GET /api/documentation-articles?locale=es
+GET /api/documentation-articles?space=mi-portal&locale=en
+GET /api/documentation-articles?space=mi-portal&locale=es
+```
+
+**Filtrar por sección (opcional):**
+```
+GET /api/documentation-categories?space=mi-portal&section=guia-de-inicio
+GET /api/documentation-articles?space=mi-portal&section=guia-de-inicio
 ```
 
 **Incluir la categoría relacionada:**
 ```
-GET /api/documentation-articles?populate[category][fields][0]=name&populate[category][fields][1]=slug
+GET /api/documentation-articles?space=mi-portal&populate[category][fields][0]=name&populate[category][fields][1]=slug
 ```
 
 **Filtrar por slug:**
 ```
-GET /api/documentation-articles?filters[slug][$eq]=mi-articulo
+GET /api/documentation-articles?space=mi-portal&filters[slug][$eq]=mi-articulo
 ```
 
 **Paginación:**
 ```
-GET /api/documentation-articles?pagination[page]=1&pagination[pageSize]=10
+GET /api/documentation-articles?space=mi-portal&pagination[page]=1&pagination[pageSize]=10
 ```
 
 **Ordenar:**
 ```
-GET /api/documentation-articles?sort=createdAt:desc
-GET /api/documentation-categories?sort=order:asc
+GET /api/documentation-articles?space=mi-portal&sort=createdAt:desc
+GET /api/documentation-categories?space=mi-portal&sort=order:asc
+GET /api/documentation-sections?space=mi-portal&sort=order:asc
 ```
 
 **Combinar parámetros:**
 ```
 GET /api/documentation-articles
-  ?locale=en
+  ?space=mi-portal
+  &locale=en
+  &section=guia-de-inicio
   &populate[category]=true
   &pagination[pageSize]=20
-  &sort=createdAt:desc
+  &sort=order:asc,title:asc
 ```
 
 ### Estructura de respuesta
@@ -387,7 +500,7 @@ GET /api/documentation-articles
 
 ---
 
-## 10. Roles y permisos
+## 11. Roles y permisos
 
 Strapi tiene tres roles por defecto:
 
@@ -400,13 +513,15 @@ Strapi tiene tres roles por defecto:
 ### Permisos de la API pública
 
 La API expone contenido **sin autenticación** para:
-- `GET /api/documentation-articles` (solo publicados)
+- `GET /api/documentation-sections` (solo publicadas)
 - `GET /api/documentation-categories` (solo publicadas)
+- `GET /api/documentation-articles` (solo publicados)
 
 Para verificar o modificar estos permisos:
 1. **Settings** → **Roles** → **Public**
-2. En "Documentation Article": verifica que `find` y `findOne` estén habilitados
+2. En "Documentation Section": verifica que `find` y `findOne` estén habilitados
 3. En "Documentation Category": verifica que `find` y `findOne` estén habilitados
+4. En "Documentation Article": verifica que `find` y `findOne` estén habilitados
 
 > No habilites `create`, `update`, o `delete` para el rol Public — cualquier persona podría modificar el contenido sin autenticación.
 
@@ -419,7 +534,7 @@ Para verificar o modificar estos permisos:
 
 ---
 
-## 11. Preguntas frecuentes
+## 12. Preguntas frecuentes
 
 **¿Por qué mi artículo no aparece en el sitio web?**
 Verifica que el artículo esté en estado "Published". Un artículo guardado como draft no es visible en la API.
@@ -428,6 +543,21 @@ Verifica que el artículo esté en estado "Published". Un artículo guardado com
 
 **Publiqué un artículo pero sigo viendo el contenido antiguo**
 Los cambios guardados después de una publicación crean un nuevo draft interno. Debes hacer clic en "Publish" nuevamente para que los cambios sean visibles.
+
+---
+
+**¿En qué orden debo crear el contenido?**
+El orden correcto es: **Espacio → Sección → Categoría → Artículo**. El espacio lo crea el administrador técnico. Tú como editor debes crear primero la sección, luego las categorías dentro de esa sección, y finalmente los artículos dentro de cada categoría.
+
+---
+
+**Creé una categoría pero no aparece en la sección correcta**
+Asegúrate de que el campo **Documentation Section** de la categoría esté asignado a la sección correcta. Abre la categoría en el Content Manager y verifica ese campo.
+
+---
+
+**¿El campo Icon de las secciones acepta cualquier valor?**
+Técnicamente sí, es texto libre. Pero el frontend solo reconocerá los valores que el equipo de desarrollo haya programado. Consulta con el desarrollador frontend qué íconos están disponibles. Si el valor no coincide con ninguno conocido, el frontend mostrará un ícono por defecto o ninguno.
 
 ---
 
@@ -444,7 +574,7 @@ Sí. **Settings** → **Internationalization** → **Add a locale**. Luego podr�
 **¿Cómo sé la URL de un artículo publicado?**
 La URL del API endpoint es:
 ```
-GET /api/documentation-articles?filters[slug][$eq]=TU-SLUG&locale=es
+GET /api/documentation-articles?space=mi-portal&filters[slug][$eq]=TU-SLUG&locale=es
 ```
 La URL "amigable" del frontend depende de cómo esté implementado el frontend (no Strapi).
 

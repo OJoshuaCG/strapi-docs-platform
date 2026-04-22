@@ -223,7 +223,16 @@ npm run preview      # preview del build
 
 ## Modelo de datos (Content Types)
 
-### `documentation-space` ← NUEVO
+Jerarquía en cadena (de mayor a menor) — cada nivel conoce solo al inmediato superior:
+
+```
+documentation-space → documentation-section → documentation-category → documentation-article
+     (navbar root)         (navbar item)         (sidebar title)          (página)
+```
+
+`documentation_space` solo existe como relación directa en `documentation-section` y `documentation-space-setting`. Category y article derivan el espacio a través de la cadena.
+
+### `documentation-space`
 
 | Campo | Tipo | Notas |
 |---|---|---|
@@ -231,6 +240,20 @@ npm run preview      # preview del build
 | `slug` | uid (desde name) | Requerido, auto-generado |
 | `description` | text | Opcional |
 | `is_active` | boolean | Default: true. Desactiva sin eliminar |
+
+Sin `draftAndPublish` ni i18n. Gestionado solo por administradores técnicos.
+
+### `documentation-section` ← NUEVO (navbar)
+
+| Campo | Tipo | Localizable | Notas |
+|---|---|---|---|
+| `name` | string | ✅ | Requerido |
+| `slug` | uid (desde name) | ✅ | Auto-generado |
+| `description` | text | ✅ | Opcional |
+| `order` | integer | ❌ | Orden en el navbar |
+| `icon` | string | ❌ | Identificador de ícono para el frontend (ej: `"book"`, `"api"`) |
+| `documentation_space` | manyToOne → space | — | Espacio al que pertenece |
+| `documentation_categories` | oneToMany → category | — | Relación inversa |
 
 ### `documentation-category`
 
@@ -241,7 +264,7 @@ npm run preview      # preview del build
 | `description` | text | ✅ | Opcional |
 | `order` | integer | ❌ | Compartido entre locales |
 | `articles` | oneToMany → article | — | Relación inversa |
-| `documentation_space` | manyToOne → space | — | **NUEVO** — espacio al que pertenece |
+| `documentation_section` | manyToOne → section | — | Sección del navbar a la que pertenece |
 
 ### `documentation-article`
 
@@ -252,11 +275,36 @@ npm run preview      # preview del build
 | `content` | richtext (bloques) | ✅ | Requerido |
 | `excerpt` | text (max 300) | ✅ | Para listados |
 | `version` | string | ❌ | Compartido entre locales |
-| `category` | manyToOne → category | — | — |
-| `documentation_space` | manyToOne → space | — | **NUEVO** — espacio al que pertenece |
+| `order` | integer | ❌ | Orden dentro de la categoría |
+| `seoTitle` | string | ✅ | Título alternativo para SEO |
+| `seoDescription` | text (max 160) | ✅ | Meta description |
+| `ogImage` | media (imagen) | ❌ | Imagen para redes sociales |
+| `category` | manyToOne → category | — | El espacio se deriva a través de category → section → space |
 
-**Ambos tipos tienen `draftAndPublish: true` e i18n habilitado.**  
+**Los tipos section, category y article tienen `draftAndPublish: true` e i18n habilitado.**  
 La API pública (sin token) solo retorna entradas `publishedAt != null`.
+
+### `documentation-space-setting`
+
+Reemplaza al antiguo `global-setting` (eliminado). Cada espacio tiene su propia configuración completa.
+
+| Campo | Tipo | Notas |
+|---|---|---|
+| `documentation_space` | oneToOne → space | Espacio al que aplica |
+| `siteName` | string | **Requerido**, default "Documentation Portal" |
+| `siteDescription` | text | Descripción SEO |
+| `favicon` | media | Favicon del sitio |
+| `sidebarLogo` | media | Logo en el sidebar |
+| `headerLogoSize` | enum (sm/md/lg/xl) | Tamaño del logo |
+| `headerLinkText` / `headerLinkUrl` | string | Link en el header |
+| `ogDefaultImage` | media | Imagen OG por defecto |
+| `footerText` | string | Texto del footer |
+| `typography` | component theme.typography | Fuentes y tamaños |
+| `spacing` | component theme.spacing | Espaciados |
+| `colors` | component theme.colors | Paleta de colores |
+| `layout` | component theme.layout | Config de layout |
+
+Sin i18n, sin `draftAndPublish`. Un registro por espacio.
 
 ---
 
@@ -372,10 +420,15 @@ export const load: PageLoad = async ({ params }) => {
 ### Multi-documentación — convenciones clave
 
 - Cada frontend consume **un único espacio** identificado por `?space=<slug>` en cada petición.
-- El middleware `global::documentation-space-filter` (`src/middlewares/documentation-space-filter.ts`) intercepta `GET /api/documentation-categories` y `GET /api/documentation-articles`, valida el param `space` e inyecta el filtro automáticamente.
+- El middleware `global::documentation-space-filter` filtra mediante la **cadena de relaciones** — no hay relaciones directas a `documentation_space` en category ni en article:
+  - `sections`: `documentation_space.slug = space` (relación directa)
+  - `categories`: `documentation_section.documentation_space.slug = space` (cadena)
+  - `articles`: `category.documentation_section.documentation_space.slug = space` (cadena)
+  - `space-settings`: `documentation_space.slug = space` (relación directa)
+- El param `?section=<slug>` es opcional y añade filtro por `documentation_section.slug` en categories y articles.
 - El endpoint `GET /api/documentation-spaces` **no** requiere el param `space` (lista todos los espacios activos).
-- El lifecycle hook en `src/api/documentation-article/content-types/documentation-article/lifecycles.ts` valida que la categoría de un artículo pertenezca al mismo espacio.
-- Al crear un nuevo espacio: crear registro en Content Manager → crear API Token Read-only → configurar frontend con `DOCUMENTATION_SPACE_SLUG`.
+- El endpoint `GET /api/documentation-space-settings?space=<slug>` devuelve la configuración visual completa del espacio.
+- Al crear un nuevo espacio: crear registro → crear secciones → crear categorías (asignando sección) → crear API Token Read-only → configurar frontend con `DOCUMENTATION_SPACE_SLUG`.
 - **Variables de entorno mínimas por frontend:** `STRAPI_API_URL`, `STRAPI_API_TOKEN`, `DOCUMENTATION_SPACE_SLUG`.
 
 ### Strapi — convenciones de extensión
@@ -504,6 +557,9 @@ docker compose exec -T mariadb \
 | `400 El parámetro space es obligatorio` | Frontend no envía `?space=` | Agregar `DOCUMENTATION_SPACE_SLUG` al env del frontend y usarlo en cada petición |
 | `400 El espacio de documentación no existe` | Slug incorrecto o `is_active: false` | Verificar el slug en Content Manager → Documentation Spaces |
 | Artículos de otros espacios aparecen mezclados | Middleware no está registrado | Verificar que `global::documentation-space-filter` está en `config/middlewares.ts` y reiniciar Strapi |
+| Secciones no aparecen en el navbar | Están en estado Draft | Publicar las secciones desde Content Manager |
+| Categoría no aparece en la sección correcta | Campo `documentation_section` mal asignado | Editar la categoría y asignar la sección correcta |
+| `La sección seleccionada no pertenece al espacio` | Sección y categoría tienen spaces distintos | Verificar que la sección y la categoría están en el mismo Documentation Space |
 
 ---
 
@@ -516,6 +572,7 @@ docker compose exec -T mariadb \
 | Herramientas backend | `backend/docs/herramientas.md` |
 | Strapi para desarrolladores | `backend/docs/strapi-para-desarrolladores.md` |
 | Strapi para editores | `backend/docs/strapi-for-dummies.md` |
+| **Multi-documentación (espacios, secciones, API)** | `backend/docs/multidocumentacion.md` |
 | Docker/Compose | `backend/docs/docker.md` |
 | MariaDB | `backend/docs/mariadb.md` |
 | Wasabi S3 | `backend/docs/wasabi-s3.md` |

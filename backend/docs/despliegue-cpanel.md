@@ -472,7 +472,7 @@ cPanel coloca un `.htaccess` con la configuración de Passenger. **No lo borres*
 | Ruta | ¿Quién accede? | Política |
 |---|---|---|
 | `/api/documentation-*` | Frontend público | Abierto |
-| `/api/global-setting` | Frontend (tema/colores) | Abierto |
+| `/api/documentation-space-settings` | Frontend (tema/colores por espacio) | Abierto |
 | `/uploads/*` | Navegadores (imágenes) | Abierto |
 | `/api/auth/local` | Admin al hacer login | Abierto (requiere credenciales) |
 | **`/admin`** | **Solo editores internos** | **Restringir por IP** |
