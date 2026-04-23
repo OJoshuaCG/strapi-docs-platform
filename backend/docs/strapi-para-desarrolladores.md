@@ -313,7 +313,7 @@ Un espacio (`space`) agrupa secciones. Una sección agrupa categorías. Una cate
   "attributes": {
     "title":          { "type": "string", "required": true, "pluginOptions": { "i18n": { "localized": true } } },
     "slug":           { "type": "uid", "targetField": "title", "pluginOptions": { "i18n": { "localized": true } } },
-    "content":        { "type": "richtext", "required": true, "pluginOptions": { "i18n": { "localized": true } } },
+    "body":           { "type": "richtext", "required": true, "pluginOptions": { "i18n": { "localized": true } } },
     "excerpt":        { "type": "text", "maxLength": 300, "pluginOptions": { "i18n": { "localized": true } } },
     "seoTitle":       { "type": "string", "pluginOptions": { "i18n": { "localized": true } } },
     "seoDescription": { "type": "text", "maxLength": 160, "pluginOptions": { "i18n": { "localized": true } } },
@@ -332,7 +332,7 @@ Un espacio (`space`) agrupa secciones. Una sección agrupa categorías. Una cate
 **Campos:**
 - `title` — requerido, localizado
 - `slug` — UID auto-generado desde `title`, localizado
-- `content` — richtext (editor de bloques de Strapi), requerido, localizado
+- `body` — richtext (editor de bloques de Strapi), requerido, localizado
 - `excerpt` — máximo 300 caracteres, localizado
 - `seoTitle` — título alternativo para `<title>` y `og:title`, localizado
 - `seoDescription` — meta description y redes sociales, máx 160 caracteres, localizado

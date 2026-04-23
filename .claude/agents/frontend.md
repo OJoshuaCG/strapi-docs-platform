@@ -245,9 +245,9 @@ Solo para clientes autenticados con token. Permite obtener contenido en estado b
 | `component` | objeto anidado con los campos del componente |
 | `relation` | objeto anidado (si se popula) o `null` |
 
-#### El Campo `content` — Formato de Bloques
+#### El Campo `body` — Formato de Bloques
 
-El campo `content` de los artículos es un **array de bloques** con la estructura:
+El campo `body` de los artículos es un **array de bloques** con la estructura:
 
 ```json
 [
@@ -410,7 +410,7 @@ Vista 1: [Nombre]
 
 **Página de artículo**
 - Origen: `GET /api/documentation-articles` con `filters[slug][$eq]`
-- Muestra: `title`, `content` (renderizado bloque a bloque), `seoTitle`/`seoDescription` para metadatos
+- Muestra: `title`, `body` (renderizado bloque a bloque), `seoTitle`/`seoDescription` para metadatos
 - Extras: tabla de contenidos derivada de los bloques `heading`, breadcrumbs desde categoría y sección
 
 **Página de inicio del portal**
@@ -499,7 +499,7 @@ documentation-space-setting   (configuración visual del espacio)
 - Relaciones: `documentation_section` (manyToOne), `articles` (oneToMany inversa)
 
 **documentation-article**
-- `title` (loc), `slug` (loc), `content` (loc, bloques), `excerpt` (loc, máx 300)
+- `title` (loc), `slug` (loc), `body` (loc, bloques), `excerpt` (loc, máx 300)
 - `seoTitle` (loc), `seoDescription` (loc, máx 160), `ogImage` (media)
 - `version`, `order`
 - Relación: `category` (manyToOne)

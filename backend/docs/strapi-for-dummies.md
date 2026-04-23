@@ -233,7 +233,7 @@ Las categorías son los **títulos de grupo del sidebar** dentro de una sección
 |---|---|---|
 | **Title** | Sí | Título del artículo |
 | **Slug** | Sí (auto) | Identificador URL. Se genera desde el título. Cámbialo si necesitas una URL específica. |
-| **Content** | Sí | Cuerpo del artículo — editor de texto enriquecido |
+| **Body** | Sí | Cuerpo del artículo — editor de texto enriquecido |
 | **Excerpt** | No | Resumen breve (máx. 300 caracteres) — para listados, vista previa |
 | **Version** | No | Versión del producto que documenta (ej: `1.0.0`) |
 | **Category** | No | Categoría a la que pertenece el artículo |
@@ -297,7 +297,7 @@ Esto solo se hace **una vez**:
 2. En la esquina superior derecha verás el selector de locale: `es`
 3. Haz clic en él y selecciona `en`
 4. Aparecerá un formulario **vacío** — introduce el contenido en inglés
-5. Los campos marcados como "localizable" (title, slug, content, excerpt, description, name) son independientes por idioma
+5. Los campos marcados como "localizable" (title, slug, body, excerpt, description, name) son independientes por idioma
 6. Los campos no localizables (version, order) se comparten entre todos los idiomas
 7. **Save** y luego **Publish** para ese locale
 
@@ -474,7 +474,7 @@ GET /api/documentation-articles
       "title": "Cómo instalar Docker",
       "slug": "como-instalar-docker",
       "excerpt": "Guía paso a paso para instalar Docker en Ubuntu.",
-      "content": "...",
+      "body": "...",
       "version": "1.0.0",
       "locale": "es",
       "publishedAt": "2024-01-15T10:30:00.000Z",

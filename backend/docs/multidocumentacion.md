@@ -46,7 +46,7 @@ documentation-space
         │   name, slug, description, order
         │
         └── documentation-article  (i18n, draftAndPublish)
-                title, slug, content, excerpt, version, order
+                title, slug, body, excerpt, version, order
                 seoTitle, seoDescription, ogImage
 ```
 
@@ -137,7 +137,7 @@ El orden recomendado de creación respeta la jerarquía referencial:
 
 1. En el Content Manager ir a **Documentation Article**
 2. Para cada artículo:
-   - Completar `title`, `slug`, `content`, `excerpt`
+   - Completar `title`, `slug`, `body`, `excerpt`
    - Campos opcionales de SEO: `seoTitle`, `seoDescription`, `ogImage`
    - `version`: etiqueta de versión visible en el frontend (ej. `v2.1`)
    - `order`: orden dentro de la categoría
@@ -301,7 +301,7 @@ GET /api/documentation-space-settings
       "title": "Configurar el SDK",
       "slug": "configurar-el-sdk",
       "excerpt": "Aprende a instalar y configurar el SDK en tu proyecto.",
-      "content": [...],
+      "body": [...],
       "version": "v2.1",
       "order": 5,
       "seoTitle": "Configuración del SDK — Portal Alpha",

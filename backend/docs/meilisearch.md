@@ -253,7 +253,7 @@ await client.createIndex('articles', { primaryKey: 'documentId' });
 
 // Configurar campos searchables
 await client.index('articles').updateSearchableAttributes([
-  'title', 'excerpt', 'content'
+  'title', 'excerpt', 'body'
 ]);
 
 // Configurar campos filtrables
@@ -276,4 +276,4 @@ await client.index('articles').updateFilterableAttributes([
 }
 ```
 
-> El campo `content` puede incluirse para búsqueda en el cuerpo del artículo, pero considera que el contenido de Strapi es en formato de bloques JSON — necesitarás extraer el texto plano antes de indexar.
+> El campo `body` puede incluirse para búsqueda en el cuerpo del artículo, pero considera que el contenido de Strapi es en formato de bloques JSON — necesitarás extraer el texto plano antes de indexar.

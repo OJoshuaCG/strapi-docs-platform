@@ -19,7 +19,7 @@
    - [GET /api/documentation-articles](#get-apidocumentation-articles)
    - [GET /api/documentation-space-settings](#get-apidocumentation-space-settings)
 6. [Componentes del tema (theme.\*)](#6-componentes-del-tema-theme)
-7. [Formato de bloques (`content`)](#7-formato-de-bloques-content)
+7. [Formato de bloques (`body`)](#7-formato-de-bloques-body)
 8. [Personalización mediante slugs](#8-personalización-mediante-slugs)
 9. [Flujo de datos completo](#9-flujo-de-datos-completo)
 10. [Propuestas de diseño por jerarquía](#10-propuestas-de-diseño-por-jerarquía)
@@ -512,7 +512,7 @@ Lista o busca artículos de documentación.
 
 **Autenticación:** Pública  
 **Requiere `?space`:** **Sí**  
-**i18n:** Sí (`title`, `slug`, `content`, `excerpt`, `seoTitle`, `seoDescription` varían por locale)  
+**i18n:** Sí (`title`, `slug`, `body`, `excerpt`, `seoTitle`, `seoDescription` varían por locale)  
 **draftAndPublish:** Sí  
 
 #### Parámetros disponibles
@@ -594,7 +594,7 @@ space=portal-principal\
       "title": "Instalación en Linux",
       "slug": "instalacion-en-linux",
       "excerpt": "Guía paso a paso para instalar el sistema en distribuciones basadas en Debian y Red Hat.",
-      "content": [
+      "body": [
         {
           "type": "paragraph",
           "children": [{ "type": "text", "text": "Este artículo cubre la instalación en Ubuntu 22.04 y CentOS 9." }]
@@ -660,7 +660,7 @@ DocumentationArticle {
   documentId:     string
   title:          string        // LOCALIZADO
   slug:           string        // LOCALIZADO
-  content:        Block[]       // LOCALIZADO — array de bloques (ver Sección 7)
+  body:           Block[]       // LOCALIZADO — array de bloques (ver Sección 7)
   excerpt:        string | null // LOCALIZADO — máx 300 chars
   version:        string | null // Compartido entre locales
   order:          number        // Compartido entre locales — default: 0
@@ -920,9 +920,9 @@ El `documentation-space-setting` incluye 4 componentes reutilizables que definen
 
 ---
 
-## 7. Formato de bloques (`content`)
+## 7. Formato de bloques (`body`)
 
-El campo `content` de los artículos es un **array de bloques**. Cada bloque se discrimina por el campo `type`.
+El campo `body` de los artículos es un **array de bloques**. Cada bloque se discrimina por el campo `type`.
 
 ### Tipos de bloque disponibles
 
@@ -1153,7 +1153,7 @@ Este valor se usa en cada petición a la API. Para desplegar múltiples instanci
      &populate[ogImage][fields][3]=height
 
    → data[0] es el artículo
-   → data[0].content es el array de bloques para renderizar
+   → data[0].body es el array de bloques para renderizar
    → data[0].category.name + data[0].category.documentation_section.name → breadcrumbs
    → data[0].seoTitle ?? data[0].title → <title>
    → data[0].seoDescription → <meta name="description">
@@ -1164,7 +1164,7 @@ Este valor se usa en cada petición a la API. Para desplegar múltiples instanci
 
 ```
 5. Al cambiar locale, repetir las peticiones con el nuevo locale:
-   Los campos localizados (name, slug, title, content, etc.) llegan en el idioma solicitado.
+   Los campos localizados (name, slug, title, body, etc.) llegan en el idioma solicitado.
    Los campos compartidos (order, icon, version, ogImage) son idénticos en todos los locales.
 ```
 
@@ -1287,7 +1287,7 @@ Sección activa: "Guía de Inicio"
 │ VERSION BADGE (si article.version)       │
 ├─────────────────────────────────────────┤
 │                                          │
-│  RENDERIZADO DE BLOQUES (content[])      │
+│  RENDERIZADO DE BLOQUES (body[])         │
 │  • paragraph → <p>                       │
 │  • heading (level 2) → <h2>              │
 │  • code → bloque con syntax highlight    │
@@ -1354,8 +1354,8 @@ Sección activa: "Guía de Inicio"
 
 ### Vista 5: Tabla de contenidos (TOC)
 
-**Origen de datos:** Derivado de los bloques `heading` del `content` del artículo.  
-**Algoritmo:** Recorrer `content[]` y filtrar los bloques con `type === "heading"`. Usar `block.level` para la indentación.
+**Origen de datos:** Derivado de los bloques `heading` del `body` del artículo.  
+**Algoritmo:** Recorrer `body[]` y filtrar los bloques con `type === "heading"`. Usar `block.level` para la indentación.
 
 ```
 TABLA DE CONTENIDOS
