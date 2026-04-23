@@ -449,17 +449,17 @@ export interface ApiDocumentationArticleDocumentationArticle
     };
   };
   attributes: {
-    category: Schema.Attribute.Relation<
-      'manyToOne',
-      'api::documentation-category.documentation-category'
-    >;
-    content: Schema.Attribute.RichText &
+    body: Schema.Attribute.RichText &
       Schema.Attribute.Required &
       Schema.Attribute.SetPluginOptions<{
         i18n: {
           localized: true;
         };
       }>;
+    category: Schema.Attribute.Relation<
+      'manyToOne',
+      'api::documentation-category.documentation-category'
+    >;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
