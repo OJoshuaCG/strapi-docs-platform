@@ -22,7 +22,9 @@ const config = ({ env }: Core.Config.Shared.ConfigParams): Core.Config.Admin => 
   preview: {
     enabled: true,
     config: {
-      allowedOrigins: [env('FRONTEND_URL', 'http://localhost:5173')],
+      allowedOrigins: (env.array('FRONTEND_URL', ['http://localhost:5173']) as string[]).map((url) => {
+        try { return new URL(url).origin; } catch { return url; }
+      }),
       async handler(
         uid: string,
         { documentId, locale, status }: { documentId: string; locale?: string; status?: string },
